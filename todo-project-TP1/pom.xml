@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.thales.formation</groupId>
-	<artifactId>todo-project</artifactId>
+	<artifactId>todo-project-tp1</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<parent>
