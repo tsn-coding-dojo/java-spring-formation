@@ -36,13 +36,20 @@ public class TodoService {
     Todo todo = todoMapper.dtoToModel(todoDto);
     todo.setStatus(TodoStatus.TODO);
 
-    //    Todo save = todoRepository.save(todo);
-    //    if (save != null) {
-    //      throw new RuntimeException("oups!");
-    //    }
-    //    return save;
     return todoRepository.save(todo);
   }
+
+  //  @Transactional
+  //  public Todo create(TodoDto todoDto) {
+  //    Todo todo = todoMapper.dtoToModel(todoDto);
+  //    todo.setStatus(TodoStatus.TODO);
+  //
+  //    Todo save = todoRepository.save(todo);
+  //    if (save != null) {
+  //      throw new RuntimeException("oups!");
+  //    }
+  //    return save;
+  //  }
 
   @Transactional
   public void update(TodoDto todoDto) {
