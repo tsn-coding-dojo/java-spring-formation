@@ -18,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.thales.formation.enums.TodoStatus;
 import com.thales.formation.mapper.TodoMapper;
+import com.thales.formation.mapper.TodoMapperImpl;
 import com.thales.formation.model.Todo;
 import com.thales.formation.repository.TodoRepository;
 
@@ -26,9 +27,14 @@ public class TodoServiceSpringTest {
 
   @TestConfiguration
   static class TodoServiceImplTestContextConfiguration {
+
+    public TodoMapper todoMapper() {
+      return new TodoMapperImpl();
+    }
+
     @Bean
-    public TodoService todoService() {
-      return new TodoService();
+    public TodoService todoService(TodoMapper todoMapper, TodoRepository todoRepository) {
+      return new TodoService(todoMapper, todoRepository);
     }
   }
 
@@ -40,9 +46,9 @@ public class TodoServiceSpringTest {
 
   @MockBean
   private EntityManagerFactory entityManagerFactoryMock;
-
-  @MockBean
-  private TodoMapper todoMapperMock;
+  //
+  //  @MockBean
+  //  private TodoMapper todoMapperMock;
 
   @Autowired
   private TodoService todoService;
