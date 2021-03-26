@@ -38,7 +38,8 @@ public class TodoService {
 
   public Todo create(TodoDto todoDto) {
     Todo todo = todoMapper.dtoToModel(todoDto);
-    todo.setId(atomicLong.getAndIncrement()).setStatus(TodoStatus.TODO);
+    todo.setId(atomicLong.getAndIncrement());
+    todo.setStatus(TodoStatus.TODO);
 
     todos.put(todo.getId(), todo);
 
