@@ -1,6 +1,8 @@
 package com.thales.formation.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -14,23 +16,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.thales.formation.enums.TodoStatus;
 import com.thales.formation.mapper.TodoMapper;
-import com.thales.formation.mapper.TodoMapperImpl;
 import com.thales.formation.model.Todo;
 import com.thales.formation.repository.TodoRepository;
 
 @ExtendWith(SpringExtension.class)
-public class TodoServiceSpringTest {
+class TodoServiceSpringCustomContextTest {
 
   @TestConfiguration
+  @ComponentScan(basePackages = "com.thales.formation.mapper")
   static class TodoServiceImplTestContextConfiguration {
-
-    public TodoMapper todoMapper() {
-      return new TodoMapperImpl();
-    }
 
     @Bean
     public TodoService todoService(TodoMapper todoMapper, TodoRepository todoRepository) {
@@ -46,9 +45,6 @@ public class TodoServiceSpringTest {
 
   @MockBean
   private EntityManagerFactory entityManagerFactoryMock;
-  //
-  //  @MockBean
-  //  private TodoMapper todoMapperMock;
 
   @Autowired
   private TodoService todoService;
@@ -56,11 +52,14 @@ public class TodoServiceSpringTest {
   @Test
   void shouldFindAllNotCompleted() {
 
-    when(todoRepositoryMock.findByStatus(TodoStatus.TODO))
+    when(todoRepositoryMock.findByStatus(any()))
         .thenReturn(
             Arrays.asList(mockTodo("toto", TodoStatus.TODO),
                 mockTodo("toto", TodoStatus.TODO)));
+
     assertThat(todoService.findAllNotCompleted()).hasSize(2);
+
+    verify(todoRepositoryMock).findByStatus(TodoStatus.TODO);
   }
 
   private Todo mockTodo(String name, TodoStatus status) {

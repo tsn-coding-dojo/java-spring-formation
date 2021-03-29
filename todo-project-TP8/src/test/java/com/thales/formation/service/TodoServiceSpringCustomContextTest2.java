@@ -5,23 +5,34 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.thales.formation.enums.TodoStatus;
 import com.thales.formation.model.Todo;
 import com.thales.formation.repository.TodoRepository;
 
-@ExtendWith(MockitoExtension.class)
-class TodoServiceTest {
+@ExtendWith(SpringExtension.class)
+@Import(TodoServiceImplTestContextConfiguration.class)
+class TodoServiceSpringCustomContextTest2 {
 
-  @Mock
+  @MockBean
   private TodoRepository todoRepositoryMock;
 
-  @InjectMocks
+  @MockBean
+  private EntityManager entityManagerMock;
+
+  @MockBean
+  private EntityManagerFactory entityManagerFactoryMock;
+
+  @Autowired
   private TodoService todoService;
 
   @Test
