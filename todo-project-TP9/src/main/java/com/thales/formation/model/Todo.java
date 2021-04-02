@@ -10,25 +10,43 @@ import javax.persistence.Id;
 
 import com.thales.formation.enums.TodoStatus;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-
 @Entity
-@Getter
-@Setter
-@Accessors(chain=true)
 public class Todo {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@Column(nullable = false, length = 255)
-	private String name;
-	
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private TodoStatus status;	
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  //  @NotNull
+  @Column(nullable = false, length = 255)
+  private String name;
+
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private TodoStatus status;
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public TodoStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(TodoStatus status) {
+    this.status = status;
+  }
 
 }

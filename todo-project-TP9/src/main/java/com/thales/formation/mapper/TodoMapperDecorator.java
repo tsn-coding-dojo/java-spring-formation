@@ -7,17 +7,19 @@ import com.thales.formation.dto.TodoDto;
 import com.thales.formation.model.Todo;
 
 public abstract class TodoMapperDecorator implements TodoMapper {
-	
-	@Autowired
-	@Qualifier("delegate")
-	private TodoMapper delegate;
-	
-	@Override
-	public Todo dtoToModel(TodoDto todoDto) {
-		Todo todo = delegate.dtoToModel(todoDto);
-		todo.setName(todo.getName().toUpperCase());
-		return todo;
-	}
-	
+
+  @Autowired
+  @Qualifier("delegate")
+  private TodoMapper delegate;
+
+  @Override
+  public Todo dtoToModel(TodoDto todoDto) {
+    Todo todo = delegate.dtoToModel(todoDto);
+
+    if (todo.getName() != null) {
+      todo.setName(todo.getName().toUpperCase());
+    }
+    return todo;
+  }
 
 }
