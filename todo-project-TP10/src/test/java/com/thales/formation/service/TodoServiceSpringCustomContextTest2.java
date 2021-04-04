@@ -5,11 +5,14 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.thales.formation.enums.TodoStatus;
@@ -17,17 +20,24 @@ import com.thales.formation.model.Todo;
 import com.thales.formation.repository.TodoRepository;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
-class TodoServiceSpringBootTest {
+@Import(TodoServiceImplTestContextConfiguration.class)
+class TodoServiceSpringCustomContextTest2 {
 
   @MockBean
   private TodoRepository todoRepositoryMock;
+
+  @MockBean
+  private EntityManager entityManagerMock;
+
+  @MockBean
+  private EntityManagerFactory entityManagerFactoryMock;
 
   @Autowired
   private TodoService todoService;
 
   @Test
   void shouldFindAllNotCompleted() {
+
     when(todoRepositoryMock.findByStatus(TodoStatus.TODO))
         .thenReturn(
             Arrays.asList(mockTodo("toto", TodoStatus.TODO),
@@ -41,5 +51,4 @@ class TodoServiceSpringBootTest {
     todo.setStatus(status);
     return todo;
   }
-
 }

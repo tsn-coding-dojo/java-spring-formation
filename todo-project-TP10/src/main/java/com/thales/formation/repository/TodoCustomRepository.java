@@ -4,8 +4,10 @@ import com.thales.formation.model.Todo;
 
 public interface TodoCustomRepository {
 
-	void updateWithControl(Todo todo, Long version);
-	
-	void deleteWithControl(Todo todo, Long version);
-	
+  void updateWithControl(Todo todo, Long version);
+
+  void deleteWithControl(Todo todo, Long version);
+
+  void detachTodo(Todo u);
+
 }
