@@ -38,134 +38,139 @@ import com.thales.formation.dto.SessionDto;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-	@Autowired
-	private ObjectMapper objectMapper;
+  @Autowired
+  private ObjectMapper objectMapper;
 
-	@Autowired
-	private SecurityAuthenticationProvider authenticationProvider;
+  @Autowired
+  private SecurityAuthenticationProvider authenticationProvider;
 
-	@Autowired
-	private CsrfTokenRepository csrfTokenRepository;
+  @Autowired
+  private CsrfTokenRepository csrfTokenRepository;
 
-	@Autowired
-	private OncePerRequestFilter csrfFilter;
+  @Autowired
+  private OncePerRequestFilter csrfFilter;
 
-	/**
-	 * Allows to enable or disable csrf protection. By default the configuration is
-	 * enable. The protection is disable using the <i>public</i> profile. <br>
-	 * The proection is also by default disable on integration test.
-	 */
-	@Value("${security.enable-csrf:true}")
-	private boolean enableCsrf;
+  /**
+   * Allows to enable or disable csrf protection. By default the configuration is
+   * enable. The protection is disable using the <i>public</i> profile. <br>
+   * The proection is also by default disable on integration test.
+   */
+  @Value("${security.enable-csrf:true}")
+  private boolean enableCsrf;
 
-	private static final String[] URL_RESOURCES = { "/", "/**/*.js.map", "/**/*.js", "/**/*.html", "/**/*.css",
-			"/**/*.jpg", "/**/glyphicons*.*", "/**/favicon.ico", "/**/*.png", "/**/*.ttf" };
+  private static final String[] URL_RESOURCES = { "/", "/**/*.js.map", "/**/*.js", "/**/*.html", "/**/*.css",
+      "/**/*.jpg", "/**/glyphicons*.*", "/**/favicon.ico", "/**/*.png", "/**/*.ttf" };
 
-	private static final String URL_LOGIN = "/login";
-	private static final String URL_LOGOUT = "/logout";
+  private static final String URL_LOGIN = "/login";
 
-	/**
-	 * Spring security configuration. <br>
-	 * By default the application use : <br>
-	 * <ul>
-	 * <li>{@link #URL_LOGIN} as login page URL</li>
-	 * <li>{@link #URL_LOGOUT} as logout page URL</li>
-	 * <li>By default all resources are protected excepted urls defined in
-	 * {@link #configure(WebSecurity)}</li>
-	 * <li>the csrf protection</li>
-	 * </ul>
-	 */
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
+  private static final String URL_LOGOUT = "/logout";
 
-		CsrfConfigurer<HttpSecurity> c = http
+  /**
+   * Spring security configuration. <br>
+   * By default the application use : <br>
+   * <ul>
+   * <li>{@link #URL_LOGIN} as login page URL</li>
+   * <li>{@link #URL_LOGOUT} as logout page URL</li>
+   * <li>By default all resources are protected excepted urls defined in
+   * {@link #configure(WebSecurity)}</li>
+   * <li>the csrf protection</li>
+   * </ul>
+   */
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
 
-				// DEV MODE
+    CsrfConfigurer<HttpSecurity> c = http
 
-				.formLogin().loginProcessingUrl(URL_LOGIN).failureHandler(getFailureHandler())
-				.successHandler(getSuccessHandler()).and().logout().logoutUrl(URL_LOGOUT)
-				.logoutSuccessHandler(getLogOutHandler()).and()
+        // DEV MODE
 
-				// COMMON
+        .formLogin().loginProcessingUrl(URL_LOGIN).failureHandler(getFailureHandler())
+        .successHandler(getSuccessHandler()).and().logout().logoutUrl(URL_LOGOUT)
+        .logoutSuccessHandler(getLogOutHandler()).and()
 
-				.authorizeRequests().antMatchers("/api/**").permitAll().anyRequest()
-				.authenticated().and().exceptionHandling().authenticationEntryPoint(getAuthenticationEntryPoint()).and()
-				.csrf();
+        // COMMON
 
-		configureCsrf(c);
-	}
+        .authorizeRequests()
+        .antMatchers("/api/**").permitAll()
+        .anyRequest().authenticated()
+        //        .antMatchers("/").permitAll()
+        //        .anyRequest().authenticated()
+        .and().exceptionHandling().authenticationEntryPoint(getAuthenticationEntryPoint()).and()
+        .csrf();
 
-	/***
-	 * Allows to configure the csrf protection depending on the application profile
-	 * and the application properties.
-	 */
-	private void configureCsrf(CsrfConfigurer<HttpSecurity> csrf) {
-		if (enableCsrf) {
-			csrf.ignoringAntMatchers(URL_LOGIN).ignoringAntMatchers(URL_LOGOUT).csrfTokenRepository(csrfTokenRepository)
-					.and().addFilterAfter(csrfFilter, CsrfFilter.class);
-		} else {
-			csrf.disable();
-		}
-	}
+    configureCsrf(c);
+  }
 
-	/**
-	 * Configuration of the open web urls. <br>
-	 * The configuration depend on the application profiles used.
-	 */
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-		List<String> openUrls = new ArrayList<>();
-		openUrls.addAll(Arrays.asList(URL_RESOURCES));
-		web.ignoring().antMatchers(openUrls.toArray(new String[] {}));
-	}
+  /***
+   * Allows to configure the csrf protection depending on the application profile
+   * and the application properties.
+   */
+  private void configureCsrf(CsrfConfigurer<HttpSecurity> csrf) {
+    if (enableCsrf) {
+      csrf.ignoringAntMatchers(URL_LOGIN).ignoringAntMatchers(URL_LOGOUT).csrfTokenRepository(csrfTokenRepository)
+          .and().addFilterAfter(csrfFilter, CsrfFilter.class);
+    } else {
+      csrf.disable();
+    }
+  }
 
-	/**
-	 * Configuration of the authentication provider. By default it use the Skeeper
-	 * authentication provider. <br>
-	 * The provider uses Skeeper rest api for user authentication.
-	 */
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.authenticationProvider(authenticationProvider);
-	}
+  /**
+   * Configuration of the open web urls. <br>
+   * The configuration depend on the application profiles used.
+   */
+  @Override
+  public void configure(WebSecurity web) throws Exception {
+    List<String> openUrls = new ArrayList<>();
+    openUrls.addAll(Arrays.asList(URL_RESOURCES));
+    web.ignoring().antMatchers(openUrls.toArray(new String[] {}));
+  }
 
-	private AuthenticationSuccessHandler getSuccessHandler() {
-		return (HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> {
-			SecurityCsrfConfiguration.handleCsrf(request, response);
+  /**
+   * Configuration of the authentication provider. By default it use the Skeeper
+   * authentication provider. <br>
+   * The provider uses Skeeper rest api for user authentication.
+   */
+  @Override
+  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    auth.authenticationProvider(authenticationProvider);
+  }
 
-			response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-			SessionDto sessionDto = new SessionDto();
-			sessionDto.setLogin(authentication.getName());
-			objectMapper.writeValue(response.getOutputStream(), sessionDto);
-		};
-	}
+  private AuthenticationSuccessHandler getSuccessHandler() {
+    return (HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> {
+      SecurityCsrfConfiguration.handleCsrf(request, response);
 
-	private AuthenticationFailureHandler getFailureHandler() {
-		return (HttpServletRequest request, HttpServletResponse response,
-				AuthenticationException exception) -> fillResponse(response, exception);
-	}
+      response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+      SessionDto sessionDto = new SessionDto();
+      sessionDto.setLogin(authentication.getName());
+      objectMapper.writeValue(response.getOutputStream(), sessionDto);
+    };
+  }
 
-	private LogoutSuccessHandler getLogOutHandler() {
-		return (HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> {
-			SecurityCsrfConfiguration.handleCsrf(request, response);
-			fillResponse(response, null);
-		};
-	}
+  private AuthenticationFailureHandler getFailureHandler() {
+    return (HttpServletRequest request, HttpServletResponse response,
+        AuthenticationException exception) -> fillResponse(response, exception);
+  }
 
-	private AuthenticationEntryPoint getAuthenticationEntryPoint() {
-		return (HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) -> {
-			if (authException != null) {
-				fillResponse(response, authException);
-			}
-		};
-	}
+  private LogoutSuccessHandler getLogOutHandler() {
+    return (HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> {
+      SecurityCsrfConfiguration.handleCsrf(request, response);
+      fillResponse(response, null);
+    };
+  }
 
-	private void fillResponse(HttpServletResponse response, AuthenticationException exception) throws IOException {
-		if (exception == null) {
-			response.getOutputStream().write("Access OK".getBytes());
-		} else {
-			response.setStatus(HttpStatus.FORBIDDEN.value());
-			response.getWriter().print(exception.getMessage());
-		}
-	}
+  private AuthenticationEntryPoint getAuthenticationEntryPoint() {
+    return (HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) -> {
+      if (authException != null) {
+        fillResponse(response, authException);
+      }
+    };
+  }
+
+  private void fillResponse(HttpServletResponse response, AuthenticationException exception) throws IOException {
+    if (exception == null) {
+      response.getOutputStream().write("Access OK".getBytes());
+    } else {
+      response.setStatus(HttpStatus.FORBIDDEN.value());
+      response.getWriter().print(exception.getMessage());
+    }
+  }
 }
