@@ -21,6 +21,9 @@ public class TodoService {
 
   private final TodoRepository todoRepository;
 
+  //  @Autowired
+  //  private Validator validator;
+
   public TodoService(TodoMapper todoMapper, TodoRepository todoRepository) {
     super();
     this.todoMapper = todoMapper;
@@ -41,6 +44,16 @@ public class TodoService {
     todo.setStatus(TodoStatus.TODO);
     return todoMapper.modelToDto(todoRepository.save(todo));
   }
+
+  //  public TodoDto create(TodoDto todoDto) {
+  //    Set<ConstraintViolation<TodoDto>> constraintViolations = validator.validate(todoDto);
+  //    if (!constraintViolations.isEmpty()) {
+  //      throw new RuntimeException("Ouch! ");
+  //    }
+  //    Todo todo = todoMapper.dtoToModel(todoDto);
+  //    todo.setStatus(TodoStatus.TODO);
+  //    return todoMapper.modelToDto(todoRepository.save(todo));
+  //  }
 
   public void update(TodoDto todoDto) {
     Todo todo = this.findById(todoDto.getId());
