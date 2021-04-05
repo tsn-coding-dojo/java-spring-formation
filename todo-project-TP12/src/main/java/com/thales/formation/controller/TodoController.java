@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.thales.formation.dto.TodoDto;
+import com.thales.formation.exception.AppCustomException;
 import com.thales.formation.service.TodoService;
 import com.thales.formation.validator.group.TodoDtoValidationOnUpdate;
 
@@ -69,6 +70,17 @@ public class TodoController {
   @DeleteMapping(value = "/")
   public void deleteAll() {
     todoService.deleteAll();
+  }
+
+  //  @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+  //  @ExceptionHandler(AppCustomException.class)
+  //  public Exception handleAppCustomException(Exception ex) {
+  //    return ex;
+  //  }
+
+  @GetMapping(value = "/exception")
+  public void testExceptionWithPostman() {
+    throw new AppCustomException("oups");
   }
 
 }
