@@ -7,7 +7,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Version;
 
 import com.thales.formation.enums.TodoStatus;
@@ -30,8 +29,7 @@ public class Todo {
   @Enumerated(EnumType.STRING)
   private TodoStatus status;
 
-  @ManyToOne(optional = false)
-  private User user;
+  private String user;
 
   public Long getId() {
     return id;
@@ -65,11 +63,11 @@ public class Todo {
     this.status = status;
   }
 
-  public User getUser() {
+  public String getUser() {
     return user;
   }
 
-  public void setUser(User user) {
+  public void setUser(String user) {
     this.user = user;
   }
 

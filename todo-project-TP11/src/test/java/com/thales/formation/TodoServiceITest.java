@@ -79,7 +79,7 @@ class TodoServiceITest {
     TodoDto todoDto = new TodoDto();
     todoDto.setName("test");
     // given
-    final TodoDto srTodoDto = todoService.create(todoDto);
+    final TodoDto srTodoDto = todoService.create(todoDto, "user");
     assertEquals(0, srTodoDto.getVersion());
 
     // when

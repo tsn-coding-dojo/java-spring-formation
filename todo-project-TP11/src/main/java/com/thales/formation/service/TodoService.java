@@ -20,13 +20,10 @@ public class TodoService {
 
   private final TodoRepository todoRepository;
 
-  private final UserService userService;
-
-  public TodoService(TodoMapper todoMapper, TodoRepository todoRepository, UserService userService) {
+  public TodoService(TodoMapper todoMapper, TodoRepository todoRepository) {
     super();
     this.todoMapper = todoMapper;
     this.todoRepository = todoRepository;
-    this.userService = userService;
   }
 
   public List<TodoDto> findAllNotCompleted() {
@@ -38,21 +35,19 @@ public class TodoService {
     return optTodo.get();
   }
 
-  public TodoDto create(TodoDto todoDto) {
+  public TodoDto create(TodoDto todoDto, String user) {
     Todo todo = todoMapper.dtoToModel(todoDto);
     todo.setStatus(TodoStatus.TODO);
-    todo.setUser(userService.getCurrentUser());
+    //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    //        String user = authentication.getName();
+    todo.setUser(user);
     return todoMapper.modelToDto(todoRepository.save(todo));
   }
 
-  public TodoDto update(TodoDto todoDto) {
-    // If object not in session, kaput !
-    Todo todo = todoMapper.dtoToModel(todoDto);
-    todo.setUser(userService.getCurrentUser());
-    return todoMapper.modelToDto(todoRepository.save(todo));
-    //    Todo todo = this.findById(todoDto.getId());
-    //    todo.setName(todoDto.getName());
-    //    todoRepository.updateWithControl(todo, todoDto.getVersion());
+  public void update(TodoDto todoDto) {
+    Todo todo = this.findById(todoDto.getId());
+    todo.setName(todoDto.getName());
+    todoRepository.updateWithControl(todo, todoDto.getVersion());
   }
 
   public void complete(Long todoId, Long version) {

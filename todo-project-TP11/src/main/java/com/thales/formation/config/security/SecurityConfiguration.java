@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,16 +19,15 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.security.web.csrf.CsrfFilter;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thales.formation.dto.SessionDto;
@@ -40,15 +40,6 @@ import com.thales.formation.dto.SessionDto;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   @Autowired
   private ObjectMapper objectMapper;
-
-  @Autowired
-  private SecurityAuthenticationProvider authenticationProvider;
-
-  @Autowired
-  private CsrfTokenRepository csrfTokenRepository;
-
-  @Autowired
-  private OncePerRequestFilter csrfFilter;
 
   /**
    * Allows to enable or disable csrf protection. By default the configuration is
@@ -65,6 +56,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   private static final String URL_LOGOUT = "/logout";
 
+  @Autowired
+  public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+    auth.inMemoryAuthentication()
+        .withUser("bob").password(passwordEncoder().encode("user")).roles("USER").authorities("user", "add", "update", "delete")
+        .and().withUser("alice").password(passwordEncoder().encode("user")).roles("USER").authorities("user", "add", "update", "delete")
+        .and().withUser("admin").password(passwordEncoder().encode("admin")).roles("ADMIN")/*.authorities("user", "add", "update", "delete", "deleteAll")*/;
+  }
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
+
   /**
    * Spring security configuration. <br>
    * By default the application use : <br>
@@ -79,10 +83,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
 
-    CsrfConfigurer<HttpSecurity> c = http
-
-        // DEV MODE
-
+    http
         .formLogin().loginProcessingUrl(URL_LOGIN).failureHandler(getFailureHandler())
         .successHandler(getSuccessHandler()).and().logout().logoutUrl(URL_LOGOUT)
         .logoutSuccessHandler(getLogOutHandler()).and()
@@ -90,27 +91,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         // COMMON
 
         .authorizeRequests()
+        .antMatchers(URL_RESOURCES).permitAll()
         .antMatchers("/api/**").permitAll()
-        .anyRequest().authenticated()
+        //        .antMatchers("/api/**").hasAnyRole("ADMIN")
+        //        .antMatchers("/api/**").hasAnyAuthority("update")
+        //        .anyRequest().authenticated()
         //        .antMatchers("/").permitAll()
         //        .anyRequest().authenticated()
         .and().exceptionHandling().authenticationEntryPoint(getAuthenticationEntryPoint()).and()
-        .csrf();
+        .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 
-    configureCsrf(c);
-  }
-
-  /***
-   * Allows to configure the csrf protection depending on the application profile
-   * and the application properties.
-   */
-  private void configureCsrf(CsrfConfigurer<HttpSecurity> csrf) {
-    if (enableCsrf) {
-      csrf.ignoringAntMatchers(URL_LOGIN).ignoringAntMatchers(URL_LOGOUT).csrfTokenRepository(csrfTokenRepository)
-          .and().addFilterAfter(csrfFilter, CsrfFilter.class);
-    } else {
-      csrf.disable();
-    }
   }
 
   /**
@@ -124,20 +114,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     web.ignoring().antMatchers(openUrls.toArray(new String[] {}));
   }
 
-  /**
-   * Configuration of the authentication provider. By default it use the Skeeper
-   * authentication provider. <br>
-   * The provider uses Skeeper rest api for user authentication.
-   */
-  @Override
-  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    auth.authenticationProvider(authenticationProvider);
-  }
-
   private AuthenticationSuccessHandler getSuccessHandler() {
     return (HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> {
-      SecurityCsrfConfiguration.handleCsrf(request, response);
-
       response.setContentType(MediaType.APPLICATION_JSON_VALUE);
       SessionDto sessionDto = new SessionDto();
       sessionDto.setLogin(authentication.getName());
@@ -152,7 +130,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   private LogoutSuccessHandler getLogOutHandler() {
     return (HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> {
-      SecurityCsrfConfiguration.handleCsrf(request, response);
       fillResponse(response, null);
     };
   }
