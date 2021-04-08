@@ -76,10 +76,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
   //    return getResponseEntity(ErrorCode.INTERNAL_SERVER_ERROR, null);
   //  }
 
-  @SuppressWarnings("rawtypes")
   @ExceptionHandler({ AppCustomException.class })
-  public ResponseEntity handleAppCustomException(HttpServletRequest req, AppCustomException exception) {
-    return getResponseEntity(ErrorCode.BAD_REQUEST, new ErrorObject(exception.getMessage()));
+  public ResponseEntity<ErrorObject> handleAppCustomException(HttpServletRequest req, AppCustomException exception) {
+    return ResponseEntity.badRequest().body(new ErrorObject(exception.getMessage()));
   }
 
   @SuppressWarnings("rawtypes")
@@ -114,8 +113,19 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     String message;
 
+    public ErrorObject() {
+    }
+
     public ErrorObject(String message) {
       super();
+      this.message = message;
+    }
+
+    public String getMessage() {
+      return message;
+    }
+
+    public void setMessage(String message) {
       this.message = message;
     }
 
