@@ -58,8 +58,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Value("${security.enable-csrf:true}")
 	private boolean enableCsrf;
 
-	private static final String[] URL_RESOURCES = { "/", "/**/*.js.map", "/**/*.js", "/**/*.html", "/**/*.css",
-			"/**/*.jpg", "/**/glyphicons*.*", "/**/favicon.ico", "/**/*.png", "/**/*.ttf" };
+	  private static final String[] URL_RESOURCES = { "/", "/**/*.js.map", "/**/*.js", "/**/*.html", "/**/*.css",
+		      "/**/*.jpg", "/**/glyphicons*.*","/**/favicon.ico", "/**/*.png", "/**/*.ttf","/swagger-resources/**","/swagger-ui.html","/v2/api-docs","/webjars/**","/swagger-ui" };
+
 	
 	private static final String[] SWAGGER_RESOURCES = { "/apidocs/**" };
 

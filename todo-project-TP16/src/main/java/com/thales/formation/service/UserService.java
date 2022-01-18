@@ -28,20 +28,25 @@ public class UserService {
 	public void postConstruct() {
 		// For demo purpose only !
 		
+		
 		log.info("Creating users !");
-		
-		User userPe1 = new User();
-		userPe1.setLogin("admin");
-		securityService.setPassword(userPe1, "admin");
-		userPe1.getRoles().add(Role.ADMIN);
-		userPe1.getRoles().add(Role.USER);
-		userRepository.save(userPe1);
-		
-		User userPe2 = new User();
-		userPe2.setLogin("user");
-		securityService.setPassword(userPe2, "user");
-		userPe2.getRoles().add(Role.USER);
-		userRepository.save(userPe2);
+		if (!userRepository.findByLogin("admin").isPresent()) {
+			User userPe1 = new User();
+			userPe1.setLogin("admin");
+			securityService.setPassword(userPe1, "admin");
+			userPe1.getRoles().add(Role.ADMIN);
+			userPe1.getRoles().add(Role.USER);
+			userRepository.save(userPe1);
+		}
+
+		if (!userRepository.findByLogin("user").isPresent()) {
+
+			User userPe2 = new User();
+			userPe2.setLogin("user");
+			securityService.setPassword(userPe2, "user");
+			userPe2.getRoles().add(Role.USER);
+			userRepository.save(userPe2);
+		}
 	}
 	
 	@PreDestroy

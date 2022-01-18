@@ -14,46 +14,46 @@ import com.thales.formation.model.Todo;
 @Service
 public class TodoService {
 
-  private Map<Long, Todo> todos = new HashMap<>();
+	private Map<Long, Todo> todos = new HashMap<>();
 
-  private AtomicLong atomicLong = new AtomicLong();
+	private AtomicLong atomicLong = new AtomicLong();
 
-  public Iterable<Todo> findAllNotCompleted() {
-    return todos.values().stream()
-        .filter(todos -> todos.getStatus() == TodoStatus.TODO)
-        .collect(Collectors.toList());
-  }
+	public Iterable<Todo> findAllNotCompleted() {
+		return todos.values().stream().filter(todos -> todos.getStatus() == TodoStatus.TODO)
+				.collect(Collectors.toList());
+	}
 
-  public Todo findById(Long id) {
-    return todos.get(id);
-  }
+	public Todo findById(Long id) {
+		return todos.get(id);
+	}
 
-  public Todo create(TodoDto todoDto) {
-    Todo todo = new Todo();
-    todo.setId(atomicLong.getAndIncrement()).setName(todoDto.getName()).setStatus(TodoStatus.TODO);
+	public Todo create(TodoDto todoDto) {
 
-    todos.put(todo.getId(), todo);
+		Todo todo = Todo.builder().id(atomicLong.getAndIncrement()).name(todoDto.getName()).status(TodoStatus.TODO)
+				.build();
 
-    return todo;
-  }
+		todos.put(todo.getId(), todo);
 
-  public void update(TodoDto todoDto) {
-    Todo todo = this.findById(todoDto.getId());
+		return todo;
+	}
 
-    todo.setName(todoDto.getName());
-  }
+	public void update(TodoDto todoDto) {
+		Todo todo = this.findById(todoDto.getId());
 
-  public void complete(Long todoId) {
-    Todo todo = this.findById(todoId);
-    todo.setStatus(TodoStatus.COMPLETED);
-  }
+		todo.setName(todoDto.getName());
+	}
 
-  public void delete(Long id) {
-    todos.remove(id);
-  }
+	public void complete(Long todoId) {
+		Todo todo = this.findById(todoId);
+		todo.setStatus(TodoStatus.COMPLETED);
+	}
 
-  public void deleteAll() {
-    todos.clear();
-  }
+	public void delete(Long id) {
+		todos.remove(id);
+	}
+
+	public void deleteAll() {
+		todos.clear();
+	}
 
 }

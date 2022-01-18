@@ -3,6 +3,7 @@ package com.thales.formation.controller;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +28,7 @@ public class TodoController {
     this.todoMapper = todoMapper;
   }
 
-  @RequestMapping(method = RequestMethod.GET, value = "/")
+  @GetMapping(value = "/")
   public List<TodoDto> findAll() {
     return todoMapper.modelToDto(todoService.findAllNotCompleted());
   }

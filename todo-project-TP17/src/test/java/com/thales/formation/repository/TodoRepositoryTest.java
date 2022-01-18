@@ -22,7 +22,7 @@ import com.thales.formation.service.SecurityService;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class TodoRepositoryTest {
-
+ 
 	@Autowired
 	private TestEntityManager entityManager;
 
@@ -32,7 +32,7 @@ public class TodoRepositoryTest {
 	@MockBean
 	private SecurityService securityService;
 
-	@Test
+	@Test 
     public void shouldFindByStatus() {
         // given
 		

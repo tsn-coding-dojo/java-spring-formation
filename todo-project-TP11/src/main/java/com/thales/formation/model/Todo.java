@@ -7,11 +7,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 import com.thales.formation.enums.TodoStatus;
 
 @Entity
+@Table(schema = "todos", name = "todo")
 public class Todo {
 
   @Id
@@ -29,6 +31,7 @@ public class Todo {
   @Enumerated(EnumType.STRING)
   private TodoStatus status;
 
+  @Column(name = "user_id")
   private String user;
 
   public Long getId() {

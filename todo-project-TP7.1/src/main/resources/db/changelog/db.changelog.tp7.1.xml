@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog logicalFilePath="db/changelog/db.changelog.tp7.1.xml"
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+	<property name="now" value="now()" dbms="h2" />
+	<property name="now" value="current_timestamp()"
+		dbms="postgresql" />
+	<property name="text" value="text" dbms="postgresql" />
+	<property name="text" value="clob" dbms="h2" />
+	<property name="text" value="clob" dbms="h2" />
+	<property name="json" value="text" dbms="postgresql" />
+	<property name="json" value="clob" dbms="h2" />
+		
+	<!-- My Changeset -->
+	<changeSet id="create-table-todo" author="formateur">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="todo"/>
+			</not>
+		</preConditions>
+		<createTable tableName="todo">
+			<column name="id" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="id_pk" />
+			</column>
+			<column name="name" type="varchar(255)" />
+			<column name="status" type="varchar(255)" />
+		</createTable>
+		<addAutoIncrement tableName="todo" columnName="id"
+			columnDataType="bigint" startWith="1" incrementBy="1" />
+	</changeSet>
+
+	<!-- At the end tag all changeset -->
+	<changeSet id="tag-database-tp-7.1" author="formateur">
+		<tagDatabase tag="tp-7.1" />
+	</changeSet>
+	
+</databaseChangeLog>
