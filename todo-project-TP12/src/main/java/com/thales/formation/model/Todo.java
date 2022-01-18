@@ -29,6 +29,7 @@ public class Todo {
   @Enumerated(EnumType.STRING)
   private TodoStatus status;
 
+  @Column(name = "user_id")
   private String user;
 
   public Long getId() {

@@ -11,16 +11,6 @@
 	<property name="json" value="clob" dbms="h2" />
 
 	<!-- Include example -->
-<!-- 	<changeSet id="1" author="formateur"> -->
-<!-- 		<createTable tableName="todo"> -->
-<!-- 			<column name="id" type="bigint"> -->
-<!-- 				<constraints primaryKey="true" primaryKeyName="id_pk" /> -->
-<!-- 			</column> -->
-<!-- 			<column name="name" type="varchar(255)" /> -->
-<!-- 			<column name="status" type="varchar(255)" /> -->
-<!-- 		</createTable> -->
-<!-- 		<addAutoIncrement tableName="todo" columnName="id" columnDataType="bigint" startWith="1" incrementBy="1" /> -->
-<!-- 	</changeSet> -->
-	<include file="00000_initial_database_setup.sql" relativeToChangelogFile="true" />
-
+	<include file="db.changelog.tp7.1.xml" relativeToChangelogFile="true" />
+	
 </databaseChangeLog>

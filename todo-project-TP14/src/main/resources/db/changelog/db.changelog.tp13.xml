@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog logicalFilePath="db/changelog/db.changelog.tp13.xml"
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+	<property name="now" value="now()" dbms="h2" />
+	<property name="now" value="current_timestamp()"
+		dbms="postgresql" />
+	<property name="text" value="text" dbms="postgresql" />
+	<property name="text" value="clob" dbms="h2" />
+	<property name="text" value="clob" dbms="h2" />
+	<property name="json" value="text" dbms="postgresql" />
+	<property name="json" value="clob" dbms="h2" />
+
+	<!-- My Changeset -->
+	<changeSet id="change-column-user-datatype-to-table-todo"
+		author="formateur">
+		<preConditions onFail="MARK_RAN">
+
+			<columnExists tableName="todo" columnName="user_id" />
+
+		</preConditions>
+		<modifyDataType tableName="todo" columnName="user_id"
+			newDataType="bigint" />
+		<rollback>
+			<modifyDataType tableName="todo" columnName="user_id"
+				newDataType="varchar(255)" />
+		</rollback>
+	</changeSet>
+
+	<changeSet id="create-table-user" author="formateur">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="users" />
+			</not>
+		</preConditions>
+		<createTable tableName="users">
+			<column name="id" type="bigint">
+				<constraints primaryKey="true"
+					primaryKeyName="id_user_pk" />
+			</column>
+			<column name="version" type="bigint" />
+			<column name="login" type="varchar(255)" />
+			<column name="password" type="varchar(255)" />
+			<column name="salt" type="varchar(255)" />
+			<column name="roles" type="varchar(255)" />
+
+		</createTable>
+		<addAutoIncrement tableName="users" columnName="id"
+			columnDataType="bigint" startWith="1" incrementBy="1" />
+		<rollback>
+			<dropSequence sequenceName="users_id_seq" />
+			<dropTable tableName="users" cascadeConstraints="true" />
+		</rollback>
+	</changeSet>
+
+	<changeSet id="add-foreign-key-user_id-to-todo"
+		author="formateur">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<foreignKeyConstraintExists
+					foreignKeyName="FK_USER_ID_TODO" />
+			</not>
+		</preConditions>
+		<addForeignKeyConstraint
+			constraintName="FK_USER_ID_TODO" referencedTableName="users"
+			baseColumnNames="user_id" baseTableName="todo"
+			referencedColumnNames="id" />
+		<rollback>
+			<dropForeignKeyConstraint
+				baseTableName="todo" constraintName="FK_USER_ID_TODO" />
+		</rollback>
+	</changeSet>
+
+	<!-- At the end tag all changeset -->
+	<changeSet id="tag-database-tp-13" author="formateur">
+		<tagDatabase tag="tp-13" />
+	</changeSet>
+
+</databaseChangeLog>

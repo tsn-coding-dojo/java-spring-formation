@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog logicalFilePath="db/changelog/db.changelog.tp11.xml"
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+	<property name="now" value="now()" dbms="h2" />
+	<property name="now" value="current_timestamp()"
+		dbms="postgresql" />
+	<property name="text" value="text" dbms="postgresql" />
+	<property name="text" value="clob" dbms="h2" />
+	<property name="text" value="clob" dbms="h2" />
+	<property name="json" value="text" dbms="postgresql" />
+	<property name="json" value="clob" dbms="h2" />
+
+	<!-- My Changeset -->
+	<changeSet id="add-column-user-to-table-todo"
+		author="formateur">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="todo" columnName="user_id"/>
+			</not>
+		</preConditions>
+		<addColumn tableName="todo">
+			<column name="user_id" type="varchar(255)"/>
+		</addColumn>
+	</changeSet>
+
+
+	<!-- At the end tag all changeset -->
+	<changeSet id="tag-database-tp-11" author="formateur">
+		<tagDatabase tag="tp-11" />
+	</changeSet>
+
+</databaseChangeLog>

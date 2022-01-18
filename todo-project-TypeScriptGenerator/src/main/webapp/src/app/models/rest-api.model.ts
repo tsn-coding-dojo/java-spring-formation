@@ -1,4 +1,4 @@
-// Generated using typescript-generator version 2.1.406 on 2018-03-07 17:57:54.
+// Generated using typescript-generator version 2.1.406 on 2021-05-07 07:38:26.
 
 export class SessionDto {
     login: string;

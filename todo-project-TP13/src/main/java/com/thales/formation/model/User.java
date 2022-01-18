@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 import com.thales.formation.config.jpa.config.JpaEnumListConverter;
@@ -24,6 +25,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain=true)
+@Table(name = "users")
 public class User {
 	
 	@Id

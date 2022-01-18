@@ -20,7 +20,7 @@ import com.thales.formation.repository.TodoRepository;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 public class TodoServiceSpringBootTest {
-
+ 
 	@MockBean
 	private TodoRepository todoRepositoryMock;
 

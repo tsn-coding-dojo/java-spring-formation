@@ -21,6 +21,8 @@ import com.thales.formation.exception.AbstractAppRuntimeException;
 import com.thales.formation.exception.AppCustomException;
 import com.thales.formation.exception.AppRuntimeException;
 
+import liquibase.pro.packaged.T;
+
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -93,7 +95,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
   protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
       HttpHeaders headers, HttpStatus status, WebRequest request) {
     ex.printStackTrace();
-    return (ResponseEntity<Object>) getResponseEntity(ErrorCode.BAD_REQUEST, null);
+    return ResponseEntity.badRequest().body((ErrorObject) new ErrorObject(ex.getMessage()));
   }
 
   private ResponseEntity<?> getResponseEntity(ErrorCode errorCode, Object response) {

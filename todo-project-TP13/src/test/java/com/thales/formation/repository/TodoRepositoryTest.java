@@ -5,13 +5,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.thales.formation.enums.Role;
 import com.thales.formation.enums.TodoStatus;
@@ -19,9 +19,9 @@ import com.thales.formation.model.Todo;
 import com.thales.formation.model.User;
 import com.thales.formation.service.SecurityService;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
-public class TodoRepositoryTest {
+class TodoRepositoryTest {
 
 	@Autowired
 	private TestEntityManager entityManager;

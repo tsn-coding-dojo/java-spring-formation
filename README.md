@@ -1,52 +1,123 @@
-Box vagrant pour la formation :
-https://repos.agora-t.net/artifactory/webapp/#/artifacts/browse/tree/General/boxes/ccl/formation-java
+# pre requis
+UN PC AVEC FULL ACCES INTERNET :)
 
-Faire un vagrant up sur le fichier Vagrantfile
+Installation JDK >= 8 + PATH dans les variables d'environement
 
-Il s'agit d'une box sous ubuntu.
+https://jdk.java.net/
 
-Pour mettre à jour la box :
-récupérer jfrogcli (jfrog.exe) : https://jfrog.com/getcli/
-Définir les variables d'environnement http_proxy et https_proxy ==> proxy thales
-Générez vous une clé artifactory : https://repos.agora-t.net/artifactory/webapp/#/profile ==> <APIKEY>
-Changer la <X.X.X> et <APIKEY> dans la commande suivante : 
-.\jfrog.exe rt upload --url https://repos.agora-t.net/artifactory --apikey <APIKEY> --props "box_name=ccl-formation-java;box_provider=virtualbox;box_version=<X.X.X>" ./formation-java.box boxes/ccl/formation/formation-java-<X.X.X>.box
+Installation d'un postgresql
 
-Documentation pour l'import d'une box : https://confluence.agora-t.net/pages/viewpage.action?pageId=14493169#ManuelD%C3%A9veloppeur-Importd'unebox
+https://www.enterprisedb.com/downloads/postgres-postgresql-downloads >= 11
 
-Extrait de la documentation :
-Vagrant
-Configuration de l'import
+password admin
 
-Pour faciliter l'import il faut configurer jfrog-cli avec la commande "jfrog rt config"
-Import d'une box
+Installation de DBeaver IDE et paramétrage de connexion
+ 
+https://dbeaver.io/
 
-Pour importer une box utiliser la commande suivante:
+localhost:5432  postgres:admin  et CREATE DATABASE todos;
 
-Avec jfrog-cli
-jfrog-cli
-jfrog rt upload --url https://repos.agora-t.net/artifactory --apikey <APIKEY> --props "box_name=<GROUP>-<NAME>;box_provider=<PROVIDER>;box_version=<VERSION>" <PATH_TO_FILE> boxes/<GROUP>/<NAME>/<NAME>-<VERSION>.box
+Installation liquibase ou utilisation du TP 10 ( maven plugin liquibase integré )
 
-Paramètres:
+https://www.liquibase.org/download + driver postgresql dans liquibase/lib à ajouter  https://jdbc.postgresql.org/download.html
 
-    APIKEY: clé api
+Installation postman pour manipulation REST avec un IDE :)
 
-    PATH_TO_FILE: chemin de la box
-    GROUP: groupe/projet de la box
-    NAME: nom court de la box
-    PROVIDER: provider (ex: virtualbox)
-    VERSION: version au format `[0-9]-[0-9]-[0-9]`
+https://www.postman.com/downloads/
 
-En cas de problème avec jfrog-cli
-import_box  Développer la source
-Import du vagrantfile
+Installation d'un eclipse STS 4
 
-S'assurer de mettre le bon lien dans le Vagrantfile:
-Vagrantfile
-# Installation
-config.vm.box = "<GROUP>-<NAME>"
-config.vm.box_url = "https://repos.agora-t.net/artifactory/api/vagrant/boxes/<GROUP>-<NAME>"
+https://spring.io/tools
+
+Installation de lombok
+
+https://projectlombok.org/download
+
+Installation d'un maven 
+
+https://maven.apache.org/download.cgi
+
+Ajouter le PATH dans les variables d'environement  maven/bin
 
 
-Avec jfrgo-cli
-jfrog rt upload --url https://repos.agora-t.net/artifactory --apikey <APIKEY> --props "box_name=<GROUP>-<NAME>" Vagrantfile boxes/<GROUP>/<NAME>/Vagrantfile
+# Source angular
+L'objectif des TP est sur Java, l'angular à été "build" et mis à disposition dans chaque TP dans /src/main/resources/public
+
+les sources sont disponible dans front-todos 
+
+# Application
+!! Ne pas oublié de lancer email-project dans certains TP
+
+Faire un run de l'application
+
+TP 1 -> 16
+
+http://localhost:8080
+
+TP 17 -> 18 
+Générer les fichiers swagger il faut faire un maven install 
+
+http://localhost:8080/index.html  => modification comportement GUI
+
+# Liquibase
+Chaque TP à partir du TP 7.1 est compliant Postgresql >= 11 ou H2 ( désactivation à faire des properties postgresql dans le fichier /src/main/resources/application.properties ) 
+
+Utilisation du DSL XML => possibilité de faire des rollback par tag / date / count ...
+
+Command maven pour un rollback UNIQUEMENT SUR LE TP 10 => exemple  mvn liquibase:rollback -Dliquibase.rollbackTag=tp-7.1
+
+sinon via install liquibase all TP depuis le TP-7.1 => exemple   liquibase --defaultsFile=db/changelog/liquibase.properties rollback tp-7.1
+
+se deplacer dans le repertoire src/main/resources/ avant
+
+
+# Utilisation de swagger
+
+TP 17 -> 18
+
+http://localhost:8080/swagger-ui.html
+
+
+# CHANGE LOG 
+
+## V2 06/05/2021 CMA (T0206457) :
+
+Global review:
+
+1.  présentation powerpoint:
+* ajout Bonus Design Pattern 
+* Divers corrections ( @GetMapping , Notion Zip / jar / ear  / war,  Notion criteria JPA, Update Swagger code-gen et non plus ennonciate ...)
+
+2. Projet email-project:
+*  Ajout logback pour trace des appels
+
+3. Front-todos
+* extraction du front dans un projet à part
+
+4. Global TP
+* suppression du webapp pour injection "buildé" du front dans /public
+* Modification des pom pour uniformisation spring 2.4.4 , liquibase , postgresql ...
+* Liquibase compliant Postgresql ou H2 in memory
+* UserService.java Check if user présent => évite un SQL not unique result
+* User MODELE => Ajout @Table(name="users") => user est un mot clef pour POSTGRESQL => error
+* Ajout readme + prerequis liquibase Postgresql
+* Ajout logback extraction  vers c:/logs-formation
+** 2 fichiers app.log et error.log 
+
+
+5. TP 7.1 -> 18:
+* ajout du plugin liquibase pour présentation du rollback =>  liquibase --defaultsFile=db/changelog/liquibase.properties rollback tp-7.1
+* Ajout changelog TP-7.1 -> TP-13 plus besoin ensuite car le mcd ne bouge pas
+
+6. TP 17 et 18
+* Ajout swagger code gen à la place de ennonciate
+* Génération automatique à partir d'un fichier swagger.json
+* configuration springfox pour interface http://localhost:8080/swagger-ui.html
+* scan package des controller pour documentation automatique
+* StaticResourceConfiguration.java  et SwaggerConfig.java  
+* Ajout d'un fichier todos-v1.api dans le TP 17 en génération ( copie du PET example de swagger-editor )
+
+7. Collection postman 
+* Ajout d'une collection postman de test à la racine 
+
+## V3 todo 

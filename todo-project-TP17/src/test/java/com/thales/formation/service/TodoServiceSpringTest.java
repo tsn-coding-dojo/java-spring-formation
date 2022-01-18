@@ -51,7 +51,7 @@ public class TodoServiceSpringTest {
 	@Autowired
 	private TodoService todoService;
 	
-	@Test
+	@Test 
 	public void shouldFindAllNotCompleted() {
 		
 		when(todoRepositoryMock.findByStatus(TodoStatus.TODO))

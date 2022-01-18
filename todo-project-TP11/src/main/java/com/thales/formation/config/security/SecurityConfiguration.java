@@ -50,7 +50,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   private boolean enableCsrf;
 
   private static final String[] URL_RESOURCES = { "/", "/**/*.js.map", "/**/*.js", "/**/*.html", "/**/*.css",
-      "/**/*.jpg", "/**/glyphicons*.*", "/**/favicon.ico", "/**/*.png", "/**/*.ttf" };
+      "/**/*.jpg","/todos/", "/**/glyphicons*.*", "/**/favicon.ico", "/**/*.png", "/**/*.ttf","/swagger-resources/**","/swagger-ui.html","/v2/api-docs","/webjars/**","/swagger-ui" };
 
   private static final String URL_LOGIN = "/login";
 
@@ -93,7 +93,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .authorizeRequests()
         .antMatchers(URL_LOGIN).permitAll()
         .antMatchers(URL_LOGOUT).permitAll()
-        .antMatchers(URL_RESOURCES).permitAll()
+        .antMatchers(URL_RESOURCES).anonymous()
         .antMatchers("/api/**").permitAll()
         //        .antMatchers("/api/**").hasAnyRole("ADMIN")
         //        .antMatchers("/api/**").hasAnyAuthority("update")
@@ -111,9 +111,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
    */
   @Override
   public void configure(WebSecurity web) throws Exception {
-    List<String> openUrls = new ArrayList<>();
-    openUrls.addAll(Arrays.asList(URL_RESOURCES));
-    web.ignoring().antMatchers(openUrls.toArray(new String[] {}));
+    web.ignoring().antMatchers(URL_RESOURCES);
   }
 
   private AuthenticationSuccessHandler getSuccessHandler() {

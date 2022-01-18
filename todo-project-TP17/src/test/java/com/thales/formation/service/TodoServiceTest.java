@@ -17,7 +17,7 @@ import com.thales.formation.repository.TodoRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TodoServiceTest {
-	
+	 
 	@Mock
 	private TodoRepository todoRepositoryMock;
 	

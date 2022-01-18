@@ -18,7 +18,7 @@ import com.thales.formation.service.TodoService;
 @RestController
 @RequestMapping("/api/todos")
 public class TodoController {
-	
+
 	@Autowired
 	private TodoService todoService;
 
@@ -26,43 +26,42 @@ public class TodoController {
 	public List<TodoDto> findAll() {
 		return todoToDto(todoService.findAllNotCompleted());
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST, value = "/")
 	public TodoDto create(@RequestBody(required = true) TodoDto todoDto) {
 		return todoToDto(todoService.create(todoDto));
 	}
-	
+
 	@RequestMapping(method = RequestMethod.PUT, value = "/{id}")
 	public void update(@PathVariable Long id, @RequestBody(required = true) TodoDto todoDto) {
 		todoDto.setId(id);
 		todoService.update(todoDto);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST, value = "/{id}/complete")
 	public void complete(@PathVariable Long id) {
 		todoService.complete(id);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
 	public void delete(@PathVariable Long id) {
 		todoService.delete(id);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.DELETE, value = "/")
 	public void deleteAll() {
 		todoService.deleteAll();
 	}
-	
+
 	private List<TodoDto> todoToDto(Iterable<Todo> todos) {
 		List<TodoDto> todoDtos = new ArrayList<>();
 		todos.forEach(todo -> todoDtos.add(todoToDto(todo)));
 		return todoDtos;
 	}
-	
+
 	private TodoDto todoToDto(Todo todo) {
-		TodoDto todoDto = new TodoDto();
-		todoDto.setId(todo.getId()).setName(todo.getName());
+		TodoDto todoDto = TodoDto.builder().id(todo.getId()).name(todo.getName()).build();
 		return todoDto;
-	}	
+	}
 
 }
