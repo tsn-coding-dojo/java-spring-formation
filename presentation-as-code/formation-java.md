@@ -2,7 +2,6 @@
 theme: default
 _class: lead 
 paginate: true 
-backgroundColor: #fff 
 backgroundImage: url('./assets/images/hero-background.svg')
 ---
 
@@ -51,17 +50,18 @@ Les fondamentaux ( et un peu plus 🚀)
 
 # Environnement de TP (1/2)
 
-> JDK 11-17:  Installer une Open JDK via https://adoptium.net/
+> **JDK 11-17**:  Installer une Open JDK _via https://adoptium.net/_
 
-Installation dans le répertoire souhaité Ajout de la variable d’environnement JAVA\_HOME pointant
-vers le répertoire d’installation du JDK Ajout du path suivant à la variable d’environnement
-PATH : `%JAVA_HOME%\bin`
+- Installation dans le répertoire souhaité 
+- Ajout de la variable d’environnement JAVA\_HOME pointant vers le répertoire d’installation du JDK 
+- Ajout du path suivant à la variable d’environnement PATH : `%JAVA_HOME%\bin`
 
-> Maven : https://maven.apache.org/download.cgi
+> **Maven** : _https://maven.apache.org/download.cgi_
 
-Dézip dans le répertoire souhaité Ajout de la variable d’environnement `MAVEN_HOME` pointant sur le
-répertoire maven Ajout du path suivant à la variable d’environnement PATH : `%MAVEN_HOME%\bin`
-Mise à jour / création du ficher `C:\Users\USER\.m2\settings.xml`
+- Dézip dans le répertoire souhaité 
+- Ajout de la variable d’environnement `MAVEN_HOME` pointant sur le répertoire maven 
+- Ajout du path suivant à la variable d’environnement PATH : `%MAVEN_HOME%\bin`
+- Mise à jour / création du ficher `C:\Users\USER\.m2\settings.xml`
 
 ---
 
@@ -74,7 +74,7 @@ Mise à jour / création du ficher `C:\Users\USER\.m2\settings.xml`
 
 --- 
 
-# Introduction
+# Le Projet - Introduction
 
 Application permettant de créer une liste de tâches
 
@@ -379,3 +379,194 @@ my-app/
 ▌ **Configuration XML dans le pom.xml**
 ▌ **Simple car bien cadré mais difficile de s’écarter du chemin**
 ▌ **Jamais de dépendance « variable ». On précise la version dans sa totalité**
+
+---
+# Spring-Boot
+
+* Permet d’accélérer le développement d’applications basées sur Spring
+* Configuration pensée par/pour l’écosystème Spring 
+  - _il est préférable de connaître les choix et alternatives_
+* Convention over Configuration
+  - Une configuration implicite standard
+* Intégrer facilement la plupart des fonctionnalités
+  - Core: Spring Security, JTA…
+  - Web: Spring MVC, Jersey, Websocket…
+  - BDD : Spring Data JPA avec driver adéquat, Elasticsearch, JDBC…
+
+![bg left:30% 80%](./assets/images/spring-boot-logo.png)
+
+---
+# Spring-Boot - Intégration via des starters
+
+- Enorme écosystème de _plugins/extension_ via des dépendances **"starters"**
+  - elasticsearch, jpa, ldap, kafka, aws
+- Plugin officiels mais également apportés par la communauté open source.
+- Apporte une configuration par défaut _"out of the box"_
+  - S'appuie sur des configurations et des annotations propres à Spring-Boot
+
+➡️https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using.build-systems.starters
+
+---
+# Spring-Boot - Packaging
+
+- Possibilité de générer un Jar exécutable embarquant un serveur
+```xml
+<plugin>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-maven-plugin</artifactId>
+    <configuration>
+      <executable>true</executable>
+    </configuration>
+</plugin>
+```
+
+- Mais également un war (et depuis peu, même une image Docker)
+
+---
+# Spring-Boot - Dev Experience
+
+- Devtools (livereload + redémarrage)
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-devtools</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+- Autocomplétion des attributs dans votre IDE préféré
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-configuration-processor</artifactId>
+  <version>MA_VERSION</version>
+  <optional>true</optional>
+</dependency>
+```
+
+---
+# Spring-Boot - Concrètement
+Le coeur d'une application Spring-Boot, c'est:
+- un `pom.xml`
+- une classe main `java` annoté avec `@SpringBootApplication`
+
+➡️https://start.spring.io/
+
+Au démarrage, l'application
+- Scanne les classes annotées @Configuration
+- Analyse le classpath (nos dépendances présentes)
+- Instancies les beans que l’on fournit (et ceux de nos dépendances)
+  - _S’appuie sur le fichier « application.properties » (ou application.yml)_
+- Possibilité de conditionner la configuration :
+  - _@Conditional, @ConditionalOnProperty, @ConditionalOnMissingClass…_
+
+---
+# Spring-Boot - A retenir 📇
+
+▌ **Simplicité de mise en place d’un projet Java**
+▌ **Toujours commencer par la configuration standard avant de se lancer dans la conf avancée**
+▌ **Regarder les properties disponibles pour la configuration**
+▌ **Liens utiles :**
+  - [Home](https://projects.spring.io/spring-boot/)
+  - [Documentation](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
+  - [Configuration classique](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
+
+<!-- 
+A noter que Spring-Boot n'est pas le seul framework !
+Il se fait bousculer par des nouveaux frameworks:
+- Quarkus
+- Micronaut
+Qui misent sur des meilleures performances au démarrage et une empreinte mémoire réduite
+-->
+
+---
+# TP #1 - Spring Boot Hello World
+➡️https://start.spring.io/
+
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+1. Créer votre première application via le site dédié
+2. Ajouter la dépendance `Spring Web`
+3. Généner le zip et ouvrer le contenu dans votre IDE préféré
+4. Placer un fichier `index.html` _avec le message de votre choix_ dans `src/main/resources/public`
+5. Lancer votre application, pleins d'optioons !
+   - Via votre IDE (_click droit > Run as Java Application / Spring Boot App_)
+   - Après un `mvn clean install` via `java -jar ./target/myapp.jar`
+   - On encore via `mvn spring-boot:run`
+6. Se connecter à `http://localhost:8080`
+
+---
+# API REST #1
+
+- Késako ? [Representational State Transfer->wiki](https://fr.wikipedia.org/wiki/Representational_state_transfer)
+- Protocole de communication léger le plus utilisé pour les communications web **client/serveur**
+- S’appuie sur les requêtes HTTP standard
+- Favorise le _"stateless"_
+- Utilisation de « verbes » :
+  - GET : Récupérer / chercher un objet
+  - POST : Créer ou réaliser une opération sur un objet
+  - PUT : Mettre à jour un objet ou en créer un lorsque l’identifiant est géré par le client
+  - DELETE : Supprimer un objet
+
+---
+# API REST #2 - Terminologie
+
+Paramètres
+
+- Path : directement dans l’URL
+  - Généralement uniquement utilisé pour les identifiants
+  - `http://monsite/resource/ID1`
+- Query : attribut d’URL (séparé par un `&` )
+  - Généralement utilisé pour filtrer les résultats (mais pas que)
+  - `http://monsite/resource?PARAMETRE1=VALEUR1&PARAMETRE2=VALEUR2`
+  
+Body
+  - Contenu de la requête
+
+Headers
+  - Entête HTTPS
+
+---
+# API REST #2 - _Restful_ - Philosophie
+
+▌ Découpage par "ressource"
+
+```bash
+# Récupération de touts les livres
+GET :http://monsite/api/books
+# Récupération d'un livre par identifiant
+GET : http://monsite/api/books/25
+
+# Ajout d'un livre d'un livre
+POST : http://monsite/api/books
+Body : { « title »: « Mon super livre » }
+
+# Modification
+PUT : http://monsite/api/books/25
+Body : { « title »: « Nouveau titre ! » }
+
+# Delete
+DELETE : http://monsite/api/books/25
+DELETE :http://monsite/api/books
+
+# Recherche via un filtre
+GET : http://monsite/api/books?title=toto
+
+# Action sur un livre ??
+POST : http://monsite/api/books/25/myactions
+```
+---
+# API REST #3  - Les réponses
+* Code `2XX`: Tout va bien
+  - 200 - OK avec contenue de la réponse
+  - 204 - OK, mais réponse vide
+* Code `3XX`: Pour tout ce qui est redirection
+* Code `4XX`: Erreur côté client HTTP
+  - 403 - Accès refusé
+  - 404 - La resource n'existe pas
+* Code `5XX`: Erreur côté serveur
+  - 500 - Erreur interne de serveur
+  - 503 - Service indisponible
+* 🤡 Il existe un code `418` - [je suis une théière](https://developer.mozilla.org/fr/docs/Web/HTTP/Status/418)
+
