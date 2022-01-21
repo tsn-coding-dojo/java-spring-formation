@@ -7,10 +7,13 @@ Il utilise le framework [Marp](https://marp.app/) pour écrire des slides-as-cod
 
 # Usage avec docker
 
-## Convert slide deck into HTML
+## Convert slide deck
 
 ```powershell
+# HTML
 docker run --rm -v ${PWD}:/home/marp/app/ -e LANG=$LANG marpteam/marp-cli formation-java.md --allow-local-files
+# Powerpoint
+docker run --rm -v ${PWD}:/home/marp/app/ -e LANG=$LANG marpteam/marp-cli formation-java.md --allow-local-files --pptx
 ```
 
 ## Watch mode
