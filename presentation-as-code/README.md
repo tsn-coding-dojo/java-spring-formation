@@ -3,7 +3,26 @@ Il utilise le framework [Marp](https://marp.app/) pour écrire des slides-as-cod
 
 # Usage avec NPM
 
-//TODO add package JSON for local dev without docker
+## Pré-requis
+
+```powershell
+npm install
+```
+
+## Usage Dev
+
+Ci-dessous les différentes commandes pour travailler avec ce projet
+
+```powershell
+# Lance le projet en mode DEV - un navigateur avec livereload s'ouvre automagiquement
+# Un export PPT et PDF est dispo depuis le navigateur
+npm run start-dev
+
+# Pour générer les slides en divers format (les sorties seront dans le répértoire /dist
+npm run deck-html
+npm run deck-pptx
+npm run deck-pdf
+```
 
 # Usage avec docker
 
