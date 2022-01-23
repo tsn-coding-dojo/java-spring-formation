@@ -52,14 +52,14 @@ Les fondamentaux ( et un peu plus 🚀)
 
 > **JDK 11-17**:  Installer une Open JDK _via https://adoptium.net/_
 
-- Installation dans le répertoire souhaité 
-- Ajout de la variable d’environnement JAVA\_HOME pointant vers le répertoire d’installation du JDK 
+- Installation dans le répertoire souhaité
+- Ajout de la variable d’environnement `JAVA_HOME` pointant vers le répertoire d’installation du JDK
 - Ajout du path suivant à la variable d’environnement PATH : `%JAVA_HOME%\bin`
 
 > **Maven** : _https://maven.apache.org/download.cgi_
 
-- Dézip dans le répertoire souhaité 
-- Ajout de la variable d’environnement `MAVEN_HOME` pointant sur le répertoire maven 
+- Dézip dans le répertoire souhaité
+- Ajout de la variable d’environnement `MAVEN_HOME` pointant sur le répertoire maven
 - Ajout du path suivant à la variable d’environnement PATH : `%MAVEN_HOME%\bin`
 - Mise à jour / création du ficher `C:\Users\USER\.m2\settings.xml`
 
@@ -198,8 +198,8 @@ Application permettant de créer une liste de tâches
 ```xml
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <!-- Définit généralement une organisation-->
@@ -264,8 +264,8 @@ Maven permet de définir une structure projet via les `modules`
 ```xml
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.thales.formation</groupId>
@@ -297,21 +297,23 @@ Avantages d'utiliser les modules:
     - également les dépendances transitives ⚠️
 
 ```xml
-  <dependencyManagement>
-    <!-- Souvent utiliser pour mutaliser les dépendances -->
-  </dependencyManagement>
 
-  <dependencies>
-    <dependency>
-      <groupId>totoGroup</groupId>
-      <artifactId>totoId</artifactId>
-      <!-- La version est inutile si déjà décrite dans  "dependencyManagement"-->
-      <version>1.2.0</version>
-      <!-- Facultatif-->
-      <scope></scope>
-    </dependency>
-  </dependencies>
+<dependencyManagement>
+  <!-- Souvent utiliser pour mutaliser les dépendances -->
+</dependencyManagement>
+
+<dependencies>
+<dependency>
+  <groupId>totoGroup</groupId>
+  <artifactId>totoId</artifactId>
+  <!-- La version est inutile si déjà décrite dans  "dependencyManagement"-->
+  <version>1.2.0</version>
+  <!-- Facultatif-->
+  <scope></scope>
+</dependency>
+</dependencies>
 ```
+
 ---
 
 # Maven - POM - Dépendances #2
@@ -328,12 +330,14 @@ Avantages d'utiliser les modules:
 # Maven - POM - Build #1
 
 - Le build nous dit "comment" est construit le projet
-  - Version de compilation java
-  - Encoding des fichiers
-  - Les étapes
-  - Les plugins / extensions à configurer
-    - _e.g. génération de code, fichier complémentaire à inclure, vérifications de format/code_
+    - Version de compilation java
+    - Encoding des fichiers
+    - Les étapes
+    - Les plugins / extensions à configurer
+        - _e.g. génération de code, fichier complémentaire à inclure, vérifications de format/code_
+
 ```xml
+
 <build>
   <plugins>
     <plugin>
@@ -349,14 +353,15 @@ Avantages d'utiliser les modules:
 # Maven - POM - Build #2
 
 * Maven dispose également de la notion de `profile`
-  * Permet de customizer le build (_en fonction OS, variables env, autres_)
+    * Permet de customizer le build (_en fonction OS, variables env, autres_)
 
 * SCM + Distribution Management
-  * Concerne la « release » du projet
-  * Déploie le projet dans un repository
-  * Intégration avec un gestionnaire de version (ex : git, mercurial, svn…)
+    * Concerne la « release » du projet
+    * Déploie le projet dans un repository
+    * Intégration avec un gestionnaire de version (ex : git, mercurial, svn…)
 
 ---
+
 # Maven - Structure d'un projet
 
 ```bash
@@ -373,6 +378,7 @@ my-app/
 ```
 
 ---
+
 # Maven - A retenir 📇
 
 ▌ **Uniformisation du build**
@@ -381,61 +387,71 @@ my-app/
 ▌ **Jamais de dépendance « variable ». On précise la version dans sa totalité**
 
 ---
+
 # Spring-Boot
 
 * Permet d’accélérer le développement d’applications basées sur Spring
-* Configuration pensée par/pour l’écosystème Spring 
-  - _il est préférable de connaître les choix et alternatives_
+* Configuration pensée par/pour l’écosystème Spring
+    - _il est préférable de connaître les choix et alternatives_
 * Convention over Configuration
-  - Une configuration implicite standard
+    - Une configuration implicite standard
 * Intégrer facilement la plupart des fonctionnalités
-  - Core: Spring Security, JTA…
-  - Web: Spring MVC, Jersey, Websocket…
-  - BDD : Spring Data JPA avec driver adéquat, Elasticsearch, JDBC…
+    - Core: Spring Security, JTA…
+    - Web: Spring MVC, Jersey, Websocket…
+    - BDD : Spring Data JPA avec driver adéquat, Elasticsearch, JDBC…
 
 ![bg left:30% 80%](./assets/images/spring-boot-logo.png)
 
 ---
+
 # Spring-Boot - Intégration via des starters
 
 - Enorme écosystème de _plugins/extension_ via des dépendances **"starters"**
-  - elasticsearch, jpa, ldap, kafka, aws
+    - elasticsearch, jpa, ldap, kafka, aws
 - Plugin officiels mais également apportés par la communauté open source.
 - Apporte une configuration par défaut _"out of the box"_
-  - S'appuie sur des configurations et des annotations propres à Spring-Boot
+    - S'appuie sur des configurations et des annotations propres à Spring-Boot
 
 ➡️https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using.build-systems.starters
 
 ---
+
 # Spring-Boot - Packaging
 
 - Possibilité de générer un Jar exécutable embarquant un serveur
+
 ```xml
+
 <plugin>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-maven-plugin</artifactId>
-    <configuration>
-      <executable>true</executable>
-    </configuration>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-maven-plugin</artifactId>
+  <configuration>
+    <executable>true</executable>
+  </configuration>
 </plugin>
 ```
 
 - Mais également un war (et depuis peu, même une image Docker)
 
 ---
+
 # Spring-Boot - Dev Experience
 
 - Devtools (livereload + redémarrage)
+
 ```xml
+
 <dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-devtools</artifactId>
-    <scope>runtime</scope>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-devtools</artifactId>
+  <scope>runtime</scope>
 </dependency>
 ```
 
 - Autocomplétion des attributs dans votre IDE préféré
+
 ```xml
+
 <dependency>
   <groupId>org.springframework.boot</groupId>
   <artifactId>spring-boot-configuration-processor</artifactId>
@@ -445,31 +461,37 @@ my-app/
 ```
 
 ---
+
 # Spring-Boot - Concrètement
+
 Le coeur d'une application Spring-Boot, c'est:
+
 - un `pom.xml`
 - une classe main `java` annoté avec `@SpringBootApplication`
 
 ➡️https://start.spring.io/
 
 Au démarrage, l'application
+
 - Scanne les classes annotées @Configuration
 - Analyse le classpath (nos dépendances présentes)
 - Instancies les beans que l’on fournit (et ceux de nos dépendances)
-  - _S’appuie sur le fichier « application.properties » (ou application.yml)_
+    - _S’appuie sur le fichier « application.properties » (ou application.yml)_
 - Possibilité de conditionner la configuration :
-  - _@Conditional, @ConditionalOnProperty, @ConditionalOnMissingClass…_
+    - _@Conditional, @ConditionalOnProperty, @ConditionalOnMissingClass…_
 
 ---
+
 # Spring-Boot - A retenir 📇
 
 ▌ **Simplicité de mise en place d’un projet Java**
 ▌ **Toujours commencer par la configuration standard avant de se lancer dans la conf avancée**
 ▌ **Regarder les properties disponibles pour la configuration**
 ▌ **Liens utiles :**
-  - [Home](https://projects.spring.io/spring-boot/)
-  - [Documentation](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
-  - [Configuration classique](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
+
+- [Home](https://projects.spring.io/spring-boot/)
+- [Documentation](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
+- [Configuration classique](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
 
 <!-- 
 A noter que Spring-Boot n'est pas le seul framework !
@@ -480,7 +502,9 @@ Qui misent sur des meilleures performances au démarrage et une empreinte mémoi
 -->
 
 ---
+
 # TP #1 - Spring Boot Hello World
+
 ➡️https://start.spring.io/
 
 <!-- _class: invert -->
@@ -491,12 +515,13 @@ Qui misent sur des meilleures performances au démarrage et une empreinte mémoi
 3. Généner le zip et ouvrer le contenu dans votre IDE préféré
 4. Placer un fichier `index.html` _avec le message de votre choix_ dans `src/main/resources/public`
 5. Lancer votre application, pleins d'optioons !
-   - Via votre IDE (_click droit > Run as Java Application / Spring Boot App_)
-   - Après un `mvn clean install` via `java -jar ./target/myapp.jar`
-   - On encore via `mvn spring-boot:run`
+    - Via votre IDE (_click droit > Run as Java Application / Spring Boot App_)
+    - Après un `mvn clean install` via `java -jar ./target/myapp.jar`
+    - On encore via `mvn spring-boot:run`
 6. Se connecter à `http://localhost:8080`
 
 ---
+
 # API REST #1
 
 - Késako ? [Representational State Transfer->wiki](https://fr.wikipedia.org/wiki/Representational_state_transfer)
@@ -504,30 +529,34 @@ Qui misent sur des meilleures performances au démarrage et une empreinte mémoi
 - S’appuie sur les requêtes HTTP standard
 - Favorise le _"stateless"_
 - Utilisation de « verbes » :
-  - GET : Récupérer / chercher un objet
-  - POST : Créer ou réaliser une opération sur un objet
-  - PUT : Mettre à jour un objet ou en créer un lorsque l’identifiant est géré par le client
-  - DELETE : Supprimer un objet
+    - GET : Récupérer / chercher un objet
+    - POST : Créer ou réaliser une opération sur un objet
+    - PUT : Mettre à jour un objet ou en créer un lorsque l’identifiant est géré par le client
+    - DELETE : Supprimer un objet
 
 ---
+
 # API REST #2 - Terminologie
 
 Paramètres
 
 - Path : directement dans l’URL
-  - Généralement uniquement utilisé pour les identifiants
-  - `http://monsite/resource/ID1`
+    - Généralement uniquement utilisé pour les identifiants
+    - `http://monsite/resource/ID1`
 - Query : attribut d’URL (séparé par un `&` )
-  - Généralement utilisé pour filtrer les résultats (mais pas que)
-  - `http://monsite/resource?PARAMETRE1=VALEUR1&PARAMETRE2=VALEUR2`
-  
+    - Généralement utilisé pour filtrer les résultats (mais pas que)
+    - `http://monsite/resource?PARAMETRE1=VALEUR1&PARAMETRE2=VALEUR2`
+
 Body
-  - Contenu de la requête
+
+- Contenu de la requête
 
 Headers
-  - Entête HTTPS
+
+- Entête HTTPS
 
 ---
+
 # API REST #2 - _Restful_ - Philosophie
 
 ▌ Découpage par "ressource"
@@ -556,17 +585,369 @@ GET : http://monsite/api/books?title=toto
 # Action sur un livre ??
 POST : http://monsite/api/books/25/myactions
 ```
+
 ---
-# API REST #3  - Les réponses
+
+# API REST #3 - Les réponses
+
 * Code `2XX`: Tout va bien
-  - 200 - OK avec contenue de la réponse
-  - 204 - OK, mais réponse vide
+    - 200 - OK avec contenue de la réponse
+    - 204 - OK, mais réponse vide
 * Code `3XX`: Pour tout ce qui est redirection
 * Code `4XX`: Erreur côté client HTTP
-  - 403 - Accès refusé
-  - 404 - La resource n'existe pas
+    - 403 - Accès refusé
+    - 404 - La resource n'existe pas
 * Code `5XX`: Erreur côté serveur
-  - 500 - Erreur interne de serveur
-  - 503 - Service indisponible
+    - 500 - Erreur interne de serveur
+    - 503 - Service indisponible
 * 🤡 Il existe un code `418` - [je suis une théière](https://developer.mozilla.org/fr/docs/Web/HTTP/Status/418)
 
+---
+
+# API REST & Spring #1
+
+```xml
+
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+1. Ajout de dépendances
+2. Annotations de classes `@RestController` & `@RequestMapping`
+3. Annotations de méthodes `@RequestMapping`
+
+<!-- 
+Par défaut Spring-Boot propose une conversion chaine de caractères <-> JSON
+-->
+
+---
+
+# API REST & Spring #2
+
+```java
+/* Déclaration du controller */
+@RestController
+/* Déclaration de l'API */
+@RequestMapping("/api/todos")
+public class MyController {
+
+  @GetMapping(value = "/{id}")
+  public BookDto findById(@PathVariable Long id) {...}
+
+  @GetMapping(value = "/")
+  public List<BookDto> search(@RequestParam Long id) {...}
+
+  @PostMapping(value = "/")
+  public BookDto create(@RequestBody BookDto id) {...}
+
+}
+```
+
+-> Mapping _"automagique"_ JSON/Pojo prise en compte par le framework
+
+---
+
+# API REST & Spring #3
+
+▌ Retour géré automatiquement par le framework
+
+- Si un pojo: serialisation automatique en `json` (et un statut `HTTP 200`)
+    - Peut être customisé via l'objet `ResponseEntity`
+- Les exceptions sont mappés également en fonction de leur nature
+    - les erreurs applicatives -> `500`
+    - les erreurs de validation -> `400`
+
+---
+
+# TP #2 - Spring Boot Web Services #1
+
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+_Préambule - une application prête-à-l'emploi est présente dans `src/main/resouces/public`_
+
+Démarrer le serveur et accéder à la GUI !
+
+---
+
+# TP #2 - Spring Boot Web Services #2
+
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+_Préambule - une application prête-à-l'emploi est présente dans `src/main/resouces/public`_
+
+1. Démarrer le serveur et accéder à la GUI !
+2. Implémenter vos premières API
+
+```bash
+# Récupération de touts les livres
+GET : http://localhost:8080/api/todos
+# Récupération d'un livre par identifiant
+GET : http://localhost:8080/api/todos/<id>
+# Ajout d'un livre d'un livre
+POST : http://localhost:8080/api/todos
+Body : { « title »: « Mon super livre » }
+# Modification
+PUT : http://localhost:8080/api/todos/<id>
+Body : { « name »: « acheter du lait » }
+# Delete
+DELETE : http://localhost:8080/api/todos/<id>
+DELETE : http://localhost:8080/api/todos
+```
+
+---
+
+# TP #2 - Spring Boot Web Services #3
+
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+1. Créer un pojo `TodoDto`
+    - Deux attributs : `id` (Long) & `name` (String)
+2. Initialiser votre controller `TodoController`
+3. Faire fonctionner au moins un API
+    - On peut bouchonner en utiliser un `HashMap<Long, String>`
+
+## ⌛⌛⌛
+
+---
+# Spring Web - A retenir 📇
+
+▌ **Système à base d'annotations**
+▌ **Spring-Boot n'est une implémentation de JSR**
+
+- _les annotations sont différentes, les principes sont identiques :)_
+
+▌ **Attention à faire des API Restful**
+▌ **Liens utiles**
+
+- [Documentation officielle](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#web)
+
+---
+
+# Spring - Annotations #1
+
+Principaux type de `beans` et annotations associées :
+
+- `@Controller` / `@RestController` : Point d'entrée REST
+- `@Service`
+- `@Repository`
+- `@Bean`: Type généralement liée à la configuration (via `@Configuration`)
+
+<!-- 
+@RestController est une spécialisation de @Controller (avec @ResponseBody intégré)
+
+@Service / @Repository sont des spécialisations de l'annotation @Component
+-->
+
+---
+
+# Spring - Annotations #2
+
+- Les beans sont des **singletons** par défaut
+- Mais il existe la notion de `@Scope` également pour gérer le cycle de vie
+    - `@Scope("prototype")` invoqué à chaque fois
+    - **Uniquement pour des applications web**
+        - `@Scope("request")`
+        - `@Scope("session")`
+        - `@Scope("application")`
+
+---
+
+# Spring - Injection de dépendances #1
+
+* Spring fonctionne par défaut avec un "package scan"
+    - _cherche dans le classpath tous les classes annotées, les instancies et résout leurs attributs_
+    - le tout enregistré dans le ✨**spring application context**✨
+* Injection de dépendances
+    - Via l'annotation `@Autowired`
+    - Via constructeur - **à privilégier**-
+    - Gestion de doublons via `@Qualifier`
+    - Dépendance optionnelle via l'option `@Autowired(required=false)`
+```java
+public class MyService {
+
+  @Autowired
+  private OtherBean otherBean;
+```
+
+---
+
+# Spring - Injection de la configuration #2
+
+```java
+@Configuration
+@ConfigurationProperties(prefix = "myprefix")
+public class ServerConfig {
+
+  private Long myprop;
+}
+```
+- Injection des la configuration via un `@Autowired`
+  - _et utiliser la conf comme un object java `serverConfig.getMyProp()`_
+- L'annotation `@Value(${myprefix.myprop:default_value})`
+```java
+@Value("${security.timeout:10}")
+private Long timeout;
+```
+
+<!-- 
+La configuration comme objet java possède les avantages de tout centraliser
+- on peut configurer le comportement du framework (erreur si attributs non présent, etc..)
+
+- `@Value` est également vérifiée au démarrage si pas de valeur par défaut 
+-->
+
+---
+![bg left:40% 80%](./assets/images/spring_proxy.svg)
+# Spring - Mécanisme de "proxification"
+
+- Spring crée un proxy de chaque bean managé et chaque méthode visible (`public`)
+  - _Non pris en compte pour les **méthodes privées ou appel interne**_ 🚨
+- Ainsi le comportement "enrichi" de Spring se trouve dans le proxy
+  - _Gestion de transactions_
+  - _Cache_
+  - _Exceptions / Transformations_
+
+<!-- 
+Spring propose deux types de proxy:
+- Si via une interface, Spring créer une implémentation de l'interface
+- Sinon s'appuie sur cglib/javassit/bytebuddy pour gérer une classe qui étend le service
+-->
+
+---
+# Spring - Cycle de vie
+
+Possibilité d'utiliser les annotations `@PostConstruct` & `@PreDestroy`
+- `@PostConstruct` : appelé une fois que le Spring Context est initialisé. _utile pour lancer un code au démarrage_
+- `@PreDestroy`: appelé à la destruction du Bean
+
+<!-- Conseil : de pas mettre trop de logique dans le @PostConstruct, cela ralentit autant le démarrage de 
+l'application -->
+
+---
+# TP #3 - Mon premier service Spring
+
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+1. Impacter le modèle
+   - Créer un modèle `Todo.java` à l'image du `TodoDto.java`
+   - Ajouter un attribut `status` via `TodoStatus.java` (valeurs : _TODO_, _COMPLETED_)
+2. Créer un service Spring de gestion de "todos" (`TodoService.java`)
+3. Câbler l’appel du service depuis le contrôleur `findAll` 
+4. S’assurer que la GUI continue à fonctionner 
+5. A l’aide d’une HashMap pour stocker les Todo faire l’implémentation complète du service et du controller
+```java
+private AtomicLong atomicLong = new AtomicLong();
+atomicLong.getAndIncrement()
+```
+Au niveau du contrôleur REST, récupérer les Todo et les transformer en Dto
+
+6. Tout doit fonctionner dans la GUI
+
+---
+# Spring - A retenir 📇
+
+▌ **Attention aux dépendances circulaires** (_e.g.A injecte B qui injecte A_)
+▌ **Proxification - maitrisez vos appels internes / méthodes privés**
+▌ **Ne pas abuser de `@PostContruct`**
+
+---
+# Lombok
+
+- Lib java permettant d'écrire moins de code
+- Via un jeu d'annotations permettant de générer du code
+  - `@Getter/@Setter`
+  - `@ToString`
+  - `@Slf4j`: Ajoute un logger 
+  - `@Data`
+- `@Accessors(chain=true)` : les setters retournent `this` au lieu de `void`
+➡ Plus de features sur le [site officiel](https://projectlombok.org/features/all)
+
+---
+# TP #4 - Lombok
+
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+- Ajouter la dépendance lombok
+```java
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>VERSION</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+- Remplacer les Getter / Setter de Todo et TodoDto par du lombok
+- Utiliser `@Accessors(chain=true)` afin d’utiliser une écriture plus "fluent"
+
+---
+# Lombok - A retenir 📇
+
+- Pas indispensable (_surtout en JDK 17_) mais rend bien service
+- Rend les pojo plus lisibles
+- On sort un peu des clous…
+- Intégration pas toujours évidente dans l’IDE
+- Attention à la génération de code et aux preprocessors maven (_e.g. Mapstruct_) 
+
+---
+# Mapstruct
+
+- Librairie Java permettant de faire du "mapping" entre les objets
+- Alternative "Dozer" : 💥 **A proscrire**
+  
+- Dozer
+  - Introspection au runtime -> Mauvaise performance
+  - Erreurs au runtime -> Risque de régression important
+- Mapstruct
+  - Code généré -> Performance "iso" dev manuel
+  - Erreurs à la compilation -> Possibilité de faire des refactoring "sereinement"
+
+---
+# Mapstruct - Howto
+
+```java
+/** Une interface suffit !
+ *  Le component model permet une intégration avec Spring (via @Autowired) */
+@Mapper(componentModel = "spring")
+public interface MyEntityMapper {
+
+  /** Pour transformer MyEntity -> MyEntityDto
+   *  Une nouvelle instance est crée */
+  MyEntityDto myEntityToMyEntityDto (MyEntity myEntity);
+  
+  /** Pour mettre à jour MyEntity à partir MyEntityDto
+   *  via @MappingTarget */
+  void myEntityDtoToMyEntity (MyEntityDto myEntityDto, @MappingTarget MyEntity myEntity);
+}
+```
+
+---
+# Mapstruct - Mapping #1
+- Mapping implicite :
+  - Mapping via les getter / setter de même nom
+
+- Mapping explicite : via l'annotation `@Mapper`
+  - Mapper un attribut vers un autre avec un autre nom
+    `@Mapper(target = "id", source = "ref")`
+  - Mapper un sous attribut :
+    `@Mapper(target = "addressLine1", source = "address.line1")`
+  - Ignorer un attribut
+    `@Mapper(target = "addressLine1", ignore = true)`
+
+---
+# Mapstruct - Mapping #2
+- Mapper vers une constante
+  `@Mapping(target = "scopeMode", expression ="java(com.app.ScopeMode.IVD)")`
+- Mapper vers du code Java (⚠ _se limiter à des choses simples !_)
+  `@Mapping(target = "withError", expression = "java(myModel.getError ()!=null)"`
+- Mapping de liste :
+  `List<MyEntityDto> myEntitiesToMyEntityDtos(List<MyEntity>)` 
+
+🚨 Mapstruct n’appelle pas automatiquement les `Decorator` _(voir plus loin)_
