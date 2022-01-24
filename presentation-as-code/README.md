@@ -1,3 +1,5 @@
+[[_TOC_]]
+
 Ce projet contient les slides de la formation java. Il utilise le
 framework [Marp](https://marp.app/) pour écrire des slides-as-code.
 
@@ -9,8 +11,7 @@ framework [Marp](https://marp.app/) pour écrire des slides-as-code.
 npm install
 ```
 
-La configuration de Marp est disponible dans le fichier `.marprc` (cela contient uniquement une conf pour permettre d'utiliser les images locales dans 
-la conversion `PDF`/`PPTX`)
+La configuration de Marp est disponible dans le fichier `.marprc` (cela contient uniquement une conf pour permettre d'utiliser les images locales dans la conversion `PDF`/`PPTX`)
 
 ## Usage Dev
 
@@ -24,9 +25,10 @@ npm run start-dev
 
 # Usage avec docker
 
-## Server mode (Serve current directory in http://localhost:8080/) - à privilégier
+## Server mode
 
 ```powershell
+# Serve current directory in http://localhost:8080/
 docker run --rm --init -v ${PWD}:/home/marp/app -e LANG=$LANG -e PUPPETEER_TIMEOUT=0 -p 8080:8080 -p 37717:37717 marpteam/marp-cli -s .
 ```
 
@@ -34,7 +36,7 @@ docker run --rm --init -v ${PWD}:/home/marp/app -e LANG=$LANG -e PUPPETEER_TIMEO
 
 ```powershell
 # HTML
-docker run --rm -v ${PWD}:/home/marp/app/ -e LANG=$LANG  marpteam/marp-cli formation-java.md --allow-local-files --html
+docker run --rm -v ${PWD}:/home/marp/app/ -e LANG=$LANG  marpteam/marp-cli formation-java.md --html
 # Powerpoint
 docker run --rm -v ${PWD}:/home/marp/app/ -e LANG=$LANG -e PUPPETEER_TIMEOUT=0 marpteam/marp-cli formation-java.md --pptx
 ```
