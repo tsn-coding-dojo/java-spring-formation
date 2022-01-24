@@ -951,3 +951,82 @@ public interface MyEntityMapper {
   `List<MyEntityDto> myEntitiesToMyEntityDtos(List<MyEntity>)` 
 
 🚨 Mapstruct n’appelle pas automatiquement les `Decorator` _(voir plus loin)_
+
+---
+# Mapstruct - Mapping #3
+
+![bg left:40% 80%](./assets/images/mapstruct.svg)
+
+Possibilité de "réutiliser" les mappers
+- _e.g. Le mapper `UserMapper` a besoin de `AddressMapper`_
+
+➡  `@Mapper(uses = { AddressMapper.class })`
+
+---
+# Mapstruct - Mapping #4 - Decorators
+
+```java
+@Mapper(componentModel = "spring")
+@DecoratedWith(MyEntityMapperDecorator.class)
+public interface MyEntityMapper {
+}
+
+public abstract class MyEntityMapperDecorator implements MyEntityMapper {
+
+  @Autowired
+  @Qualifier("delegate")
+  private MyEntityMapper delegate;
+
+  @Override
+  public MyEntityDto modelToDto(MyEntity myEntity) {
+    MyEntityDto entityDto = delegate.modelToDto(myEntity);
+    
+    // Ajouter la logique "complexe" ici 
+    
+    return entityDto;
+  }
+}
+```
+
+<!-- 
+Use case : enrichissement complexe d’un élément mappé (exemple : faire appel à un service)
+
+- Classe abstraite implémentant l’interface de mapping
+
+- Possibilité d’injecter le mappeur principal généré pour l’appeler dans un premier temps (@Autowired @Qualifier("delegate"))
+
+- Annoter le Mapper pour lui dire d’utiliser le décorateur: @DecoratedWith(MyEntityMapperDecorator.class)
+-->
+
+---
+# Mapstruct - Mapping #5 - Gestion des erreurs
+
+- Plusieurs mode pour gérer un différence d'attributs entre source / target
+  - `IGNORE`
+  - `WARNING` _valeur par défaut_
+  - `ERROR` _à privilégier (erreur en amont, surtout en cas de refactoring)_
+
+➡  `@Mapper(unmappedTargetPolicy = ReportingPolicy.ERROR)`
+
+---
+# TP #5 - Mapstruct
+
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+1. Ajouter les dépendances MapStruct: cf. [documentation officielle](https://mapstruct.org/documentation/stable/reference/html/#_apache_maven)
+2. Créer le Mapper `TodoMapper.java`
+3. L’utiliser dans le service et le contrôleur
+4. S’assurer que tout continue à marcher dans la GUI 😊
+5. Créer un `Decorator` et faire la transformation souhaitée à la création (_e.g.  passer en majuscule le nom_)
+
+---
+# Mapstruct - A retenir 📇
+
+▌ Erreur de compilation = Sécurité
+
+▌ Performances proches du code natif
+
+▌ Peut malgré tout vite devenir complexe en particulier lorsqu’on commence à utiliser les décorateurs (découpage du mapping à plusieurs endroits)
+
+▌ Attention au mapping pour la mise à jour d’entités (ne pas tout mapper !)
