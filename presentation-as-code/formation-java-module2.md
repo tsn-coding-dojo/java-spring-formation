@@ -262,3 +262,96 @@ Solution : un clear() toutes les 50 entités.
 ▌ Attention à la taille du cache lors d’un traitement batch
 
 ▌ Attention au "lazy loading" et "eager fetching" 🚨 Bien identifier les cas 🚨
+
+---
+# Spring Data JPA
+
+▌ API Spring pour simplifier l’accès aux données
+
+▌ Offre des méthodes natives pour réaliser du CRUD et pagination
+
+▌ Abstraction des sources de données (_JPA, MongoDB, ElasticSearch…_)
+
+---
+# Spring Data JPA - Intégration
+
+- L'intégration se fait via l'interface`Repository`
+  - `Repository` > `CrudRepository` > `PagingAndSortingRepository` > `JpaRepository`
+  
+```java
+public interface UserRepository extends PagingAndSortingRepository<User , Long> {
+	
+}
+```
+
+---
+# Spring Data JPA - Intégration
+
+- la logique repose entre autres via des règles implicites -> règles de nommages des méthodes
+  - Tronc Commun : `findBy` ➕ Attribut sur lequel rechercher
+  - Filtre : `Containing` / `GreaterThan` / `In` / `IsTrue` / `IsFalse` …
+  - Négation du filtre : `Not`
+  - Filtres complémentaires : `And` / `Or`
+  - Tri
+    - `OrderBy`
+    - Sens du Tri: `Asc` ou `Desc`
+
+```java
+List<Todo> findByStatusOrderByDateAsc(TodoStatus todoStatus);
+```
+
+---
+# Spring Data JPA - Intégration
+
+- On peut aussi utiliser `Query` pour définir une requête
+```java
+@Query("select u from User u where u.emailAddress = ?1")
+User findByEmailAddress(String emailAddress);
+```
+- Cela fonctionne aussi en cas d'update/delete
+```java
+@Modifying
+@Query("UPDATE Company c SET c.address = :address WHERE c.id = :companyId")
+int updateAddress(@Param("companyId") int companyId, @Param("address") String address);
+```
+
+<!--
+Le nom n’a plus d’importance
+
+Annotation @Modifying en cas d’update / delete
+
+Nommage des paramètres implicite ou explicite
+
+Possibilité de faire du SQL natif
+-->
+
+---
+# Spring Data JPA - Intégration
+
+- La notion de `@NamedQuery` fonctionne pareille mais définie au niveau de l'entité (classe)
+```java
+@Entity
+@NamedQuery(name = "User.findByEmailAddress",
+  query = "select u from User u where u.emailAddress = ?1")
+public class User {
+}
+
+public interface UserRepository extends JpaRepository<User, Long> {
+
+  User findByEmailAddress(String emailAddress);
+}
+```
+
+---
+# Spring Data JPA - QueryHints
+
+- Les `@QueryHints` / `@QueryHint` permettent d’influencer l’exécution des requêtes.
+  - `HINT_FETCH_SIZE`: par lots de combien les résultats sont récupérés et montés en mémoire
+  - `SPEC_HINT_TIMEOUT` : timeout de requête en millisecondes
+  - `HINT_CACHEABLE` : utilisation du cache de niveau 2
+  - `HINT_READONLY` : requête readonly -> Pas de dirty check
+```java
+@QueryHints(value = @QueryHint(name = org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE, value = "1000"))
+@Query("SELECT t FROM Todo t")
+Stream<Todo> streamAllToExport();
+```
