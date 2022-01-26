@@ -301,6 +301,25 @@ List<Todo> findByStatusOrderByDateAsc(TodoStatus todoStatus);
 ```
 
 ---
+# Spring Data JPA - Type de retours
+
+▌ `MyEntity`
+
+Le requête un et un seul élément
+
+▌ `Optional<MyEntity>`
+
+Le quête retourne 0 ou 1 élément
+
+▌ `List<MyEntity>`
+
+La requête retourne 0 ou n éléments
+
+▌ `Stream<MyEntity>`
+
+La requête retourne 0 ou n éléments. Le résultat sera streamé
+
+---
 # Spring Data JPA - Intégration
 
 - On peut aussi utiliser `Query` pour définir une requête
@@ -355,3 +374,65 @@ public interface UserRepository extends JpaRepository<User, Long> {
 @Query("SELECT t FROM Todo t")
 Stream<Todo> streamAllToExport();
 ```
+
+---
+# Spring Data JPA - Extension du repository
+
+```java
+interface CustomizedUserRepository {
+  void someCustomMethod(User user);
+}
+class CustomizedUserRepositoryImpl implements CustomizedUserRepository {
+
+  public void someCustomMethod(User user) {
+    // Your custom implementation
+  }
+}
+interface UserRepository extends CrudRepository<User, Long>, CustomizedUserRepository {
+
+  // Declare query methods here
+}
+```
+
+<!--
+Possibilité d'ajouter des comportements custom au Repository
+- Avec une interface
+- Une implémentation (convention avec un `Impl` qui peut ne pas dépendre de JPA 
+(e.g. injecter l’entity manager ou un JdbcTemplate pour créer des requêtes)
+
+
+Enfin venir étendre une interface avec le Repo Spring + le repo Custom rend toutes les méthodes disponibles pour les clients
+-->
+
+---
+# Spring Data JPA - A retenir 📇
+
+▌ **Named query pour les perfs pures VS query dynamiques…**
+
+▌ **Liens utiles :**
+
+[Doc officielle](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/)
+
+
+---
+# TP #6 - Spring Data Jpa
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+- Nouvelle dépendances
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+<dependency>
+  <groupId>com.h2database</groupId>
+  <artifactId>h2</artifactId>
+  </dependency>
+<dependency>
+```
+
+- Annoter la classe Todo comme il se doit (`@Entity`, `@Id`)
+- Créer le repository de Todo `PagingAndSortingRepository`
+- Implémenter la partie `create` et `findAllNotCompleted` des Todo
+- Câbler le `TodoService` sur le `TodoRepository`
