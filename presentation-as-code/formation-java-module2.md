@@ -436,3 +436,138 @@ Enfin venir étendre une interface avec le Repo Spring + le repo Custom rend tou
 - Créer le repository de Todo `PagingAndSortingRepository`
 - Implémenter la partie `create` et `findAllNotCompleted` des Todo
 - Câbler le `TodoService` sur le `TodoRepository`
+
+---
+# Les transactions 
+
+- Si aucune transaction n’a été débutée, Spring Data JPA en crée une le temps de l’opération unitaire
+  - _Exemple : à l’appel de la méthode « save », « findById »…_
+- Mais il est possible que l'on souhaite que la transaction englobe la totalité de notre opération métier
+  - Utilisation de l’annotation Spring `@Transactional`
+  - Quelques paramètres possibles :
+    - `propagation` : `REQUIRED` / `MANDATORY` / `REQUIRES_NEW` / ...
+    - `readOnly` : La transaction est-elle read only ou non
+    - `timeout` : Timeout de tranasction
+    - `noRollbackFor` : Exceptions qui n’entraînent pas un rollback
+    - `isolation` : décrit comment les modifications appliquées entre des transactions concurrentes sont visibles entre elles
+
+<!--
+Remarque : Hibernate réalise un dirty check juste avant la fin de la transaction pour identifier les éléments à mettre à jour
+-->
+
+---
+# TP #7 - Les transactions
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+1. Implémenter l’Update de Todo
+
+Utiliser le mapper mapstruct pour faire la modification
+Ne pas mettre de transaction ni appeler « save » pour voir que l’entité n’est pas mise à
+jour car elle est détachée
+
+2. Ajouter un annotation afin de mettre en place une transaction
+
+Vérifier que la mise à jour fonctionne
+
+3. Finir d’implémenter l’API Todo
+
+---
+# Les transactions
+
+- Les transactions permettent de garantir l’intégrité de la base vis-à-vis de plusieurs requêtes / traitements
+  - Tant que la transaction n’est pas commitée, les mises à jour en BDD ne sont pas « confirmées »
+  - Il est possible de « rollbacker » les modifications (ex : déclenchement d’une exception, contrainte en base de données…)
+
+- A noter que les données non encore commitées n’ont pas d’existence pour les autres connexions
+
+> Ne s’applique qu’aux SGDB transactionnels ! (ex : MySQL, Posgresql…)
+
+<!--
+Exemple 
+Udpate with exception
+Create with exception after save
+Create with exception after save no @Transactional
+-->
+
+---
+# Les outils de migrations de données
+
+![](./assets/images/migrations.png)
+
+<!--
+Dans quel état se trouve la base ?
+Est-ce qu’un script a déjà été passé?
+Est-ce qu’un quick fix apporté à la prod et été déporter sur la val?
+Comment partir d’un BDD from scratch ?
+
+Le plus souvent on est capable de répondre 
+-->
+
+
+---
+# Outils de migration de base de données – Pourquoi ?
+
+▌ On le fait déjà dans notre code 
+
+- Versionning du code source est universel
+- Builds reproductible et intégration continue
+- Release et déploiement maitrisés
+
+▌ Les outils de migrations nous redonne le contrôle de la BDD
+
+- Recréer de base « from scratch »
+- Rendre lisible quel changement a été apporté et quand
+- Migrer de façon déterministe et reproductible (idempotence ftw)
+- Tout ça dans du code accessible à tous qui peut suivre le même workflow que notre code (test, code review, …)
+
+---
+# Les outils de migrations de données
+
+▌ **Deux principaux outils dans le monde JVM**
+
+- Liquibase
+- Flyway
+
+▌ **Similitudes**
+
+- Deux offres gratuites vs premium
+- Utilisation de SQL pour les scripts de migrations
+- Large support de base de données
+- Peuvent être lancés depuis une application ou la ligne de commande
+
+---
+# Les outils de migrations de données - différences
+
+▌ **Liquibase**
+
+- Permet de gérer plus facilement le rollback (payant sur Flyway)
+- Permet de générer automatiquement des diffs de base de données
+- Offre une DSL qui permet de viser plusieurs bases avec les mêmes scripts (XML)
+- Gestion de préconditions
+- Plus d’options mais aussi potentiellement plus complexe à appréhender
+
+▌ **Flyway**
+
+- SQL only
+- Simple, léger, efficace
+
+---
+# TP 7.1 - Outils de migration de base de données
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+▌ Liquibase
+
+Ajouter la dépendance
+```xml
+<dependency>
+    <groupId>org.liquibase</groupId>
+    <artifactId>liquibase-core</artifactId>
+</dependency>
+```
+
+- Créer un fichier `src\main\resources\db\changelog\db.changelog-master.xml`
+  - Contient la création de la table en XML
+- Modifier le votre application properties tel que
+  - `spring.liquibase.change-log=classpath:db/changelog/db.changelog-master.xml`
