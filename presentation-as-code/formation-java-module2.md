@@ -571,3 +571,90 @@ Ajouter la dépendance
   - Contient la création de la table en XML
 - Modifier le votre application properties tel que
   - `spring.liquibase.change-log=classpath:db/changelog/db.changelog-master.xml`
+
+---
+# Test unitaires
+
+![bg left:40% 80%](./assets/images/unit_tests.png)
+
+▌ **Tests unitaires :**
+
+- Test des méthodes d’une classe _(ex : un Service)_
+- Mock des interactions avec les autres briques
+- Rapide à mettre en place et exécuter
+
+▌ **Tests d’intégrations :**
+
+- Les composants interagissent les un avec les autres
+
+▌ **Tests fonctionnels :**
+
+- Tests à partir des interfaces
+
+---
+# Test unitaires - Bonne pratiques
+
+▌ Les tests doivent être joués en isolation
+
+▌ On teste des comportements – pas des implémentations
+
+Testons les APIs publique
+
+▌ Opter pour une méthodologies Red – Green – Refactor
+
+Commencer par un test pour valider / cibler un comportement
+Faire une première implémentation « sale » mais qui fonctionne
+On refactor
+- Lisibilité / Nettoyage
+- Déduplication / Application de Patterns
+
+---
+# Junit 5 
+
+▌ Emplacement identique que le code (« package/dossier ») mais dans `src/test/java`
+
+▌ Le plus simple test
+
+- `@Test` -> `org.junit.jupiter.api.Test` 
+- Annotation `@BeforeAll` : Exécuté une seule fois avant le premier test
+- Annotation `@BeforeEach` : Exécuté avant chaque test
+- De même avec `@AfterEach` / `@AfterAll`
+- `@DisplayName` bien pratique pour expliciter le test par rapport à une méthode
+
+---
+# Test unitaires - librairies d'assertions
+
+▌ AssertJ
+
+API de validation de test
+- `assertThat(XXX)` : `XXX` la valeur à valider
+- `isEqualTo(…)` / `startsWith(…)` / `endsWith(…)` / `hasSize(…)` / `contains(…)`
+
+Exemple : `assertThat(frodo.getName()).isEqualTo("Frodo");`
+
+- Assertions en filtrant des valeurs / voir même des attributs
+- Assertions sur les exceptions
+
+Surtout n’hésitez pas à [lire la documentation](https://github.com/assertj/assertj-examples/tree/main/assertions-examples/src/test/java/org/assertj/examples)
+
+
+---
+# Test unitaires - librairies de mock
+
+▌ Mockito
+
+- Utile pour les tests unitaires
+- Permet de bouchonner les appels à un service tiers
+  - _Exemple : simuler l’appel à un service externe (REST, Database)_
+
+```java
+// you can mock concrete classes, not only interfaces
+LinkedList mockedList = mock(LinkedList.class);
+
+// stubbing appears before the actual execution
+when(mockedList.get(0)).thenReturn("first");
+
+String value= mockedList.get(0);
+assertEquals(value, "first");
+verify(mockedList).get(0);
+```
