@@ -637,7 +637,6 @@ Exemple : `assertThat(frodo.getName()).isEqualTo("Frodo");`
 
 Surtout n’hésitez pas à [lire la documentation](https://github.com/assertj/assertj-examples/tree/main/assertions-examples/src/test/java/org/assertj/examples)
 
-
 ---
 # Test unitaires - librairies de mock
 
@@ -658,3 +657,184 @@ String value= mockedList.get(0);
 assertEquals(value, "first");
 verify(mockedList).get(0);
 ```
+
+---
+# Test unitaires - Spring Boot
+
+- Context d’exécution : `@ExtendWith(SpringExtension.class)`
+
+On peut tester chaque couche en isolation
+- `@SpringBootTest` -> Context Spring complet
+- `@WebMvcTest` -> Couche controller
+- `@DataJpaTest` -> Couche Repository
+- Couche service -> ? 
+  - Via un context spécifique
+
+<!--
+`@WebMvcTest` -> utile pour tester la couche WEB - Auth, Html Converters, Exception handlers, filter
+`@DataJpaTest` -> pour tester vos repos
+-->
+
+---
+# Test unitaires - Spring Boot
+
+Option full `Mockito`
+```java
+@ExtendWith(MockitoExtension.class)
+class TodoServiceTest {
+  	
+  @Mock
+  private TodoRepository todoRepositoryMock;
+  
+  @InjectMocks
+  private TodoService todoService;
+}
+```
+Via `MockitoJUnitRunner.class`, `@Mock`, `InjectMocks` 
+
+---
+# Test unitaires - Spring Boot
+
+Option intégrée à Spring
+```java
+@SpringBootTest
+class TodoServiceSpringBootTest {
+  
+  @MockBean
+  private TodoRepository todoRepositoryMock;
+  
+  @Autowired
+  private TodoService todoService;
+}
+```
+Via `@MockBean`
+
+---
+# TP 8 - Test unitaires
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-test</artifactId>
+  <scope>test</scope>
+</dependency>
+```
+
+1. Ajouter la dépendance `spring-boot-starter-test`
+2. Créer un test unitaire pour TodoService (_avec Mockito_)
+   - `src/test/java : com.thales.formation.service.TodoServiceTest.java`
+3. Créer un test unitaire pour TodoRepository (_avec @DataJpaTest_)
+   - `src/test/java : com.thales.formation.repository.TodoRepositoryTest`
+4. Créer un test d’intégration pour TodoService
+   - Avec `@SpringBootTest`
+
+Faire un test s’assurant que findAllNotCompleted retourne bien 2 éléments
+
+---
+# Test unitaires - A retenir 📇
+
+- Un indicateur d'un code bien testé se définit par la qualité, pas la quantité des tests
+- Les services / configuration de test doit se rapprocher autant de possible de la prod afin de limiter les risques d’erreur
+- Ne tester pas 100 fois la même chose
+- Un test pour éviter une régression
+
+---
+# HibernateValidator - Validation des entrées
+
+- Implémentation de Bean Validation (JSR 380)
+
+- Objectif : Vérifier la validité des données au plus tôt
+-> Validation des entrées (REST, JMS…)
+
+---
+# HibernateValidator - Validation des entrées
+
+- `@NotNull` : Champ non null
+- `@Min` : Valeur (int, float…) minimale ou longueur minimale (string)
+- `@Max` : Valeur (int, float…) maximale ou longueur maximale (string)
+- `@Size(min=X, max=Y)` : Combinaison de `@Min et `@Max
+- `@NotEmpty` : Chaine de caractère non null et non vide
+- `@NotBlank` : Chaine de caractère non null, non vide et non uniquement constituée d’espaces / tabulations
+- `@AssertTrue` / `@AssertFalse`  : Boolean True/False attendu
+- `@Email` : Chaine de caractère devant être un email
+- `@URL` : String URL
+- `@Pattern(regexp="…")` : String conforme à une regexp
+- `@Digits(integer=x, fraction=y)` : Nombre à virgule
+
+---
+# HibernateValidator - Validation des entrées
+
+- `@Positive` / `@PositiveOrZero` : Nombre positif / positif ou 0
+- `@Negative` / `@NegativeOrZero`: Nombre négatif/ négatif ou 0
+- `@Past` and `@PastOrPresent` : Date passée / passée ou instant T
+- `@Future` and `@FutureOrPresent` : Date future / future ou instant T
+- `@Valid` : Valider un sous objet !
+
+---
+# HibernateValidator - Validation custom
+
+```java
+@Target({ ElementType.FIELD })
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = NoSpecialCharactersValidator.class)
+public @interface NoSpecialCharacters {
+
+  String message() default "Should (or should not) contain special characters";
+  Class<?>[] groups() default { };
+  Class<? extends Payload>[] payload() default { };
+}
+```
+<!--
+@Interface : Il s’agit d’une annotation
+@Target : A quoi s’applique l’annotation
+@Constraint(validatedBy = XXX) : Fait référence à la classe implémentant la validation
+-->
+```java
+public class NoSpecialCharactersValidator implements ConstraintValidator<NoSpecialCharacters, String> {
+
+  private String regex = "^.*[/\\,;\\-_#].*$";
+
+  @Override
+  public boolean isValid(String object, ConstraintValidatorContext constraintContext) {
+    if ( object == null ) {
+      return true;
+    }
+
+    return object.matches(regex);
+  }
+}
+```
+
+---
+# HibernateValidator - Validation groups
+
+Use case : Un même `DTO` utilisé dans deux WebService (_e.g. : create / update_)
+
+- Pouvoir distinguer les validations s’appliquant uniquement à un contexte donné
+- Créer une annotation `@Interface` "NomDuGroup"
+- Déclarer le groupe au niveau des validateurs : `@NotNull(groups = { Update.class })`
+- Préciser le groupe à utiliser : `@Validated({MyGroup.class})` au lieu de `@Valid`
+- Annotation non JSR
+
+---
+# TP 9 - HibernateValidator
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+1. Appliquer une validation sur la longueur de `TodoDto.java`
+2. S’assurer que cela fonctionne dans la GUI (erreur)
+3. Créer un groupe de validation `Update.java` pour indiquer que l’Id de TodoDto ne doit pas être null uniquement dans le cas de l’update
+4. Créer un validateur custom `NoSpecialCharacters` pour valider que le nom du `Todo` ne contient pas de caractère spéciaux (à votre guise)
+   `com.thales.formation.validator.NoSpecialCharacters`
+
+---
+# HibernateValidator - A retenir 📇
+
+- Utilisez les annotations de la JSR plutôt que celles d’Hibernate
+- Valider autant que possible les entrées du système
+- Ne jamais faire confiance à l’appelant (ex : GUI)
+- Pensez à valider les sous-objets !
+- Ne pas oublier les validations métier
+  - Conseil : gérer cette validation dans un second temps (niveau controller)
