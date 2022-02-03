@@ -838,3 +838,61 @@ Use case : Un même `DTO` utilisé dans deux WebService (_e.g. : create / update
 - Pensez à valider les sous-objets !
 - Ne pas oublier les validations métier
   - Conseil : gérer cette validation dans un second temps (niveau controller)
+
+---
+# Modifications concurrentes
+
+▌ Object : Comment gérer le fait que 2 utilisateurs / traitements ne modifient la même donnée en même temps
+
+➡ décalage entre la donnée de travail et la version en base
+
+▌ 2 sujets distincts
+
+- Niveau serveur
+- Niveau GUI
+
+---
+# Modifications concurrentes - niveau Server
+
+▌ Example: Site e-commerce
+
+L’utilisateur ne peut pas annuler sa commande si celle-ci est déjà en statut SEND
+
+![](./assets/images/concurrence.png)
+
+---
+# Modifications concurrentes - Pessimiste
+
+- On verrouille les données en base à la récupération le temps du traitement 
+- Les autres traitements concurrents doivent attendre que l’on libère les données
+
+```java
+BigDecimal prixTotal = new BigDecimal(0);
+
+List<Livre> livres = em.createQuery("from Livre")
+  .setLockMode(LockModeType.PESSIMISTIC_READ)
+  .setHint("javax.persistence.lock.timeout", 5000)
+  .setParameter("catId", categoryId)
+  .getResultList();
+
+for (Item item : items) {
+  prixTotal = prixTotal.add(item.getPrix());
+}
+```
+
+---
+# Modifications concurrentes - Optimiste
+
+Repose sur un mécanisme de version, soit :
+- un numéro de version
+- timestamp
+```java
+@Version
+@Column(nullable = false)
+private Long version;
+```
+- Géré automatiquement par Hibernate
+- Cas du bulk update : utilisation du mot clé `versioned`
+```java
+Query q = session.createQuery("update versioned Item set ... where ...");
+```
