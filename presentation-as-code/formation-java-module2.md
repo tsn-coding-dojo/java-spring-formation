@@ -896,3 +896,51 @@ private Long version;
 ```java
 Query q = session.createQuery("update versioned Item set ... where ...");
 ```
+
+<!-- 
+Version gérée automatiquement par Hibernate. L’application ne doit pas modifier cette valeur !
+Les autres moyens d’accès aux données devraient aussi implémenter l’optimistic lock pour plus de sûreté : le timestamp est alors plus simple à utiliser pour les applications non-hibernate.
+
+L’utilisation d’un compteur est plus safe car 2 transactions pourraient lire et modifier une donnée dans la même ms. Ceci est peu probable car la plupart des JVM n’ont pas cette précision garantie.
+De plus, dans un cluster, il est très difficile d’avoir une synchro parfaite des horloges de toutes les JVM.
+-->
+
+---
+# Modifications concurrentes - A retenir 📇
+
+▌ Privilégier la version optimiste si possible
+
+▌ ⚠ Attention - La version ne concerne qu’un seul objet ! Elle n’est pas partagée par les sous-objets !
+_(ex : si je mets à jour l’adresse d’un utilisateur, la version de l’adresse change, mais pas celle de l’utilisateur !)_
+
+---
+# Modifications concurrentes - Niveau GUI
+
+Exemple :
+- 2 utilisateurs, chacun sur leur navigateur internet, mettent à jour parallèlement la même donnée (ex : configuration)
+- Sans contrainte particulière, la règle du « dernier qui sauvegarde gagne » s’applique
+
+Solution :
+
+- Redescendre la version à la GUI
+- A là sauvegarde, la GUI renvoie sa version de l’objet
+- Le serveur peut s’assurer que la version est toujours la même que celle en base et déclencher une erreur le cas échéant
+
+---
+# TP 10 - Modification concurrente
+
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+1. Ajouter le versioning à l’entité Todo (_attribut : `version`_)
+2. Redescendre la version dans la GUI
+3. Mettre place la gestion de conflit « GUI » côté server
+- Contrôler la version remontée vis-à-vis d l’objet à mettre à jour
+  - Nouveau requestParam « version » pour WS : Complete, Delete
+  - Dans le cadre de l’update, la version est dans le DTO
+  - Redescendre cette problématique jusqu’au TodoRepository
+  Créer un custom repository (étendre TodoRepository)
+    - com.thales.formation.repository.TodoCustomRepository
+    - com.thales.formation.repository.TodoCustomRepositoryImpl
+    - updateWithControl et deleteWithControl
+- Lever une exception le cas échéant
