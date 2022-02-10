@@ -252,3 +252,74 @@ Lectures utiles :
 3. Mettre à jour TodoCustomRepositoryImpl en conséquence
 4. Tester dans la GUI
 
+---
+# Tâches schedulées / traitements batch
+
+▌ **Annotation Spring : @Scheduled**
+
+Paramètres :
+- `cron` : Cron syntax
+- `fixedDelay` : exécution toutes les x millisecondes **après l’exécution précédente**
+- `fixedRate` : exécution toutes les x millisecondes
+
+---
+# Tâches schedulées / traitements batch
+
+▌ TaskExecutor
+
+Il s’agit du gestionnaire d’exécution. Permet notamment de définir un pool d’exécution
+
+Pour Spring boot configuration : Déclarer un bean « Executor »
+
+```java
+@Bean
+public Executor taskExecutor() {
+  return Executors.newScheduledThreadPool(10);
+}
+```
+
+---
+# Tâches schedulées / traitements batch
+
+▌ **Exécution asynchrone**
+
+Activer les exécutions asynchrone : `@EnableAsync`
+Annoter la méthode à rendre asynchrone : `@Async`
+- Attention aux appels intra service !
+
+---
+# Tâches schedulées / traitements batch
+
+▌ Batch d’export avec Spring Data JPA
+
+- `@Transactional(readOnly = true)`
+- Streamer les lignes
+- Positionner un fetchSize
+
+```java
+@QueryHints(value = @QueryHint(name = org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE, value = "1000"))
+@Query("SELECT t FROM Todo t")
+Stream<Todo> streamAllToExport();
+```
+
+---
+# TP13 : Tâches schedulées / traitements batch
+
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+▌ **Ajouter la classe de configuration des tâches schedulées**
+
+- `com.thales.formation.config.scheduling.SchedulingConfiguration.java`
+- Annotations : `@EnableScheduling`, `@EnableAsync`, `@Configuration`
+- Y ajouter un Executor
+
+▌ **Créer un Scheduler d’export des Todos**
+
+- `com.thales.formation.scheduler.ExportTodoScheduler.java`
+
+▌ **Mettre à jour le service Todo pour exposer la méthode d’export**
+
+- Celle-ci s’appuiera sur une nouvelle méthode du repository retournant un stream avec @QueryHint adapté
+
+- Se contente d’afficher les lignes (system.out.println)
