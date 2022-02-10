@@ -72,11 +72,11 @@ public class TodoController {
     todoService.deleteAll();
   }
 
-  //  @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-  //  @ExceptionHandler(AppCustomException.class)
-  //  public Exception handleAppCustomException(Exception ex) {
-  //    return ex;
-  //  }
+//  @ExceptionHandler(NoSuchElementFoundException.class)
+//  @ResponseStatus(HttpStatus.NOT_FOUND)
+//  public ResponseEntity<String> handleNoSuchElementFoundException(AppCustomException exception ) {
+//    return ResponseEntity.status(HttpStatus.NOT_FOUND) body(exception.getMessage());
+//  }
 
   @GetMapping(value = "/exception")
   public void testExceptionWithPostman() {
