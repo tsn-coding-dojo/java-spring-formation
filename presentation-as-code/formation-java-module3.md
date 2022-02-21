@@ -323,3 +323,103 @@ Stream<Todo> streamAllToExport();
 - Celle-ci s’appuiera sur une nouvelle méthode du repository retournant un stream avec @QueryHint adapté
 
 - Se contente d’afficher les lignes (system.out.println)
+
+---
+# Gestion des logs
+
+Questions à se poser
+- Quels événements logger ?
+- Quelles informations doivent figurer dans la log pour être exploitable ?
+- Quelle politique de roulement dans les logs ?
+- Combien de jours conserver les logs ?
+- Quelle volumétrie cela va représenter ?
+- Toujours logger l’exception à moins d’avoir une bonne raison
+  - Pas de e.printStackTrace()
+  - Pas de System.out.println()
+
+---
+# Gestion des logs
+
+- Interface de logging
+- Supporte plusieurs implémentations (ex : log4j, logback…)
+- 5 niveaux de log :
+  - `TRACE`
+  - `DEBUG`
+  - `INFO`
+  - `WARN`
+  - `ERROR`
+
+---
+# Gestion des logs - Logback
+
+- Implémentation des logging
+- Intégrer dans spring, configuration en définissant un fichier `logback.xml`
+
+```xml
+<configuration>
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+  
+    <appender name="file" class="ch.qos.logback.core.FileAppender">
+        <file>/tmp/logback.log</file>
+        <append>true</append>
+        <immediateFlush>true</immediateFlush>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.sematext.blog">
+        <appender-ref ref="console"/>
+    </logger>
+    <root level="info">
+        <appender-ref ref="file" />
+    </root>
+</configuration>
+```
+
+<!-- 
+Il peut y avoir plusieurs typ d'appenders: 
+- SMTPAppender – accumulates data in batches and send the content of the batch to a user-defined email after a user-specified event occurs
+- AsyncAppender – appends the logs events asynchronously
+- RollingFileAppender -  faire des rotations de logs en fonction de la taille, des jours, etc..
+Il y la notion de filtres (LevelFilter , ThresholdFilter)
+
+- MDC - Mapped Diagnostic Context, pour avoir du contexte additionnel
+- Marker - Permet de tagger nos logs
+-->
+
+---
+# Gestion des logs - Logback & Spring-Boot
+
+- Automatiquement intégré via la dépendance `spring-starter-web`
+- Se référer aux properties spring boot pour un premier niveau de configuration
+```properties
+logging.level.org.springframework.web=debug
+logging.level.org.hibernate=error
+```
+- Possibilité d’utiliser les profiles spring dans la conf logback via `logback-spring.xml`:
+```xml
+<springProfile name="staging">
+    <!-- configuration to be enabled when the "staging" profile is active -->
+</springProfile>
+
+<springProperty scope="context" name="fluentHost" source="myapp.fluentd.host"
+                defaultValue="localhost"/>
+```
+
+---
+# TP14 :  Gestion des logs
+
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+- Utiliser l’annotation `@Slf4j` de lombok pour déclarer un logger dans `ExceptionHandler`
+  - En profiter pour supprimer tous les system.out.println... Et printStackTrace…
+- Mettre des logs en `WARN`
+- Passer le niveau de log de `RestExceptionHandler` à `ERROR` (application.properties):
+  `logging.level.com.thales.formation.config.rest.RestExceptionHandler=ERROR`
+- Constater l’impact
