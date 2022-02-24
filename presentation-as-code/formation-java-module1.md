@@ -286,7 +286,7 @@ Maven permet de définir une structure projet via les `modules`
 Avantages d'utiliser les modules:
 - Un seul commande pour tout builder
 - Possibilité de builder uniquement un sous-modules
-- Possiblité de mutaliser un certain nombre de paramétrage (plugin, dependencies, properties, etc..)
+- Possiblité de mutualiser un certain nombre de paramétrage (plugin, dependencies, properties, etc..)
 -->
 
 ---
@@ -301,7 +301,7 @@ Avantages d'utiliser les modules:
 ```xml
 
 <dependencyManagement>
-  <!-- Souvent utiliser pour mutaliser les dépendances -->
+  <!-- Souvent utiliser pour mutualiser les dépendances -->
 </dependencyManagement>
 
 <dependencies>
