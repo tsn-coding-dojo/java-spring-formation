@@ -193,7 +193,7 @@ Livre - Chapitre
 # Hibernate - Héritage #2
 
 ▌ **Plusieurs stratégies possibles**
-- `JOINDED` :
+- `JOINED` :
   - 1 Table commune où sont stockés les attributs communs
   - 1 Table par sous-classe avec une foreign key `@PrimaryKeyJoinColumn`
 - `TABLE_PER_CLASS` :
@@ -220,8 +220,8 @@ Livre - Chapitre
 /** Usage  */
 Query<DeptEmployee> query = session.createNamedQuery("DeptEmployee_FindByEmployeeNumber",
         DeptEmployee.class);
-        query.setParameter("employeeNo", "001");
-        DeptEmployee result = query.getSingleResult();
+query.setParameter("employeeNo", "001");
+DeptEmployee result = query.getSingleResult();
 ```
 
 ---
@@ -428,8 +428,7 @@ Enfin venir étendre une interface avec le Repo Spring + le repo Custom rend tou
 <dependency>
   <groupId>com.h2database</groupId>
   <artifactId>h2</artifactId>
-  </dependency>
-<dependency>
+</dependency>
 ```
 
 - Annoter la classe Todo comme il se doit (`@Entity`, `@Id`)

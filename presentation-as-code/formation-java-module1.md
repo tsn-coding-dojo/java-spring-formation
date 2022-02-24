@@ -685,17 +685,17 @@ _Préambule - une application prête-à-l'emploi est présente dans `src/main/re
 2. Implémenter vos premières API
 
 ```bash
-# Récupération de touts les livres
+# Récupération de touts les todos
 GET : http://localhost:8080/api/todos
-# Récupération d'un livre par identifiant
+# Récupération d'un todo par identifiant
 GET : http://localhost:8080/api/todos/<id>
-# Ajout d'un livre d'un livre
+# Ajout d'un nouveau todo
 POST : http://localhost:8080/api/todos
 Body : { « title »: « Mon super livre » }
-# Modification
+# Modification d'un todo existant
 PUT : http://localhost:8080/api/todos/<id>
 Body : { « name »: « acheter du lait » }
-# Delete
+# Delete d'un todo
 DELETE : http://localhost:8080/api/todos/<id>
 DELETE : http://localhost:8080/api/todos
 ```
@@ -784,11 +784,10 @@ public class MyService {
 @Configuration
 @ConfigurationProperties(prefix = "myprefix")
 public class ServerConfig {
-
   private Long myprop;
 }
 ```
-- Injection des la configuration via un `@Autowired`
+- Injection de la configuration via un `@Autowired`
   - _et utiliser la conf comme un object java `serverConfig.getMyProp()`_
 - L'annotation `@Value(${myprefix.myprop:default_value})`
 ```java
@@ -838,7 +837,7 @@ l'application -->
 
 1. Impacter le modèle
    - Créer un modèle `Todo.java` à l'image du `TodoDto.java`
-   - Ajouter un attribut `status` via `TodoStatus.java` (valeurs : _TODO_, _COMPLETED_)
+   - Ajouter un attribut `status` via l'enum `TodoStatus.java` (valeurs : _TODO_, _COMPLETED_)
 2. Créer un service Spring de gestion de "todos" (`TodoService.java`)
 3. Câbler l’appel du service depuis le contrôleur `findAll` 
 4. S’assurer que la GUI continue à fonctionner 
@@ -854,7 +853,7 @@ Au niveau du contrôleur REST, récupérer les Todo et les transformer en Dto
 ---
 # Spring - A retenir 📇
 
-▌ **Attention aux dépendances circulaires** (_e.g.A injecte B qui injecte A_)
+▌ **Attention aux dépendances circulaires** (_e.g. A injecte B qui injecte A_)
 ▌ **Proxification - maitrisez vos appels internes / méthodes privés**
 ▌ **Ne pas abuser de `@PostContruct`**
 
@@ -971,6 +970,7 @@ Possibilité de "réutiliser" les mappers
 @Mapper(componentModel = "spring")
 @DecoratedWith(MyEntityMapperDecorator.class)
 public interface MyEntityMapper {
+  MyEntityDto modelToDto(MyEntity myEntity);
 }
 
 public abstract class MyEntityMapperDecorator implements MyEntityMapper {
