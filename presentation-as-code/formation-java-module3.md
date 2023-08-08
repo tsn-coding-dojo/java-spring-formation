@@ -35,16 +35,16 @@ Dans le cas d’un site internet :
 
 - Limitez les appels CORS au minimum (appels cross domaine)
   – Quel site internet est autorisé à m’appeler ?
-- Activez le CSFR si possible (besoin d’une session)
+- Activez le CSRF si possible (besoin d’une session)
     - Jeton échangé lors des appels POST / PUT
 
 ---
 
-# Securité - quelques notions
+# Sécurité - quelques notions
 
 ![bg left:50% 60%](./assets/images/auth-flow.png)
 
-- Principaux protocols de nos jours:
+- Principaux protocoles de nos jours:
     - SAML
     - OAuth 2.0
 
@@ -56,7 +56,7 @@ Dans le cas d’un site internet :
 
 ---
 
-# Securité - Spring Security
+# Sécurité - Spring Security
 
 ```xml
 
@@ -73,7 +73,7 @@ Comportement de base
 
 ---
 
-# Securité - Spring Security - Authentication
+# Sécurité - Spring Security - Authentication
 
 ![auto](./assets/images/securitycontextholder.png)
 
@@ -97,7 +97,7 @@ L'authentification repose sur:
 
 ---
 
-# Securité - Spring Security - Authorization
+# Sécurité - Spring Security - Authorization
 
 - Tout dépend de la notion de `GrantedAuthority`, interface qui possède une simple méthode
 
@@ -107,28 +107,23 @@ String getAuthority();
 
 - Souvent laissé à la main de l'utilisateur
 - Historiquement Spring gère une notion de "rôle" et "privilèges" (avec le rôle préfixé par `ROLE_`)
-    - Mais en vrai, cela est souvent mappé vers une simple string et la notion interne
+    - Mais en réalité, cela est souvent mappé vers une simple string et la notion interne
       de `GrantedAuthority`
+- 🚨 Dans les dernières versions de Spring Security, roles et privilèges sont similaires
 
 ---
 
-# Securité - Spring Security
-
-![auto](./assets/images/authorizationhierarchy.png)
-
----
-
-# Securité - Spring Security
+# Sécurité - Spring Security
 
 La sécurisation peut se passe à plusieurs niveaux:
 
 - Via la configuration des endpoints
 - Via des annotations
-    - Dans la configuration:  `@EnableGlobalMethodSecurity` -> `@EnableMethodSecurity `
+    - Dans la configuration:  `@EnableMethodSecurity `
     - Dans vos controlleurs:  `@PreAuthorize(XXX)`
         - `permitAll` : public
         - `isAuthenticated()` : l’utilisateur est authentifié
-        - `hasRole(‘…’)` : l’utilisateur dispose du rôle demandé
+        - `hasAuthority(‘…’)` : l’utilisateur dispose du droit demandé
         - `hasAnyAuthority(‘…’)` : l’utilisateur dispose d’au moins un des droits demandé
 
 ---
@@ -159,13 +154,13 @@ La sécurisation peut se passe à plusieurs niveaux:
 - Essayer de s’authentifier dans la GUI
 - Sécuriser les WebServices Todo (annotation `@PreAuthorize`)
     - findAll -> Public (permitAll)
-    - create -> privilège « add » ou role Admin (`hasAuthority('add') || hasRole('ROLE_ADMIN')`)
+    - create -> privilège « add » (`hasAuthority('add')`)
     - update, complete, delete -> Authentifié (`isAuthenticated()`)
-    - deleteAll -> Admin (`hasRole(‘ROLE_ADMIN’)`)
+    - deleteAll -> Admin (`hasAuthority(‘admin’)`)
 - Vérifier que ce niveau de sécurité fonctionne (notamment le deleteAll)
 - Mettre en place un contrôle du droit de modification de la donnée (todoCustomRepositoryImpl)
-    - Le propriétaire peut modifier ses Todos
-    - Un admin peut modifier n’importe lequel
+    - seul le propriétaire peut modifier ou supprimer ses Todos
+    - Un admin peut modifier ou supprimer n’importe lequel
 
 ---
 # TP 11 - Spring Security
@@ -352,8 +347,7 @@ Questions à se poser
 ---
 # Gestion des logs - Logback
 
-- Implémentation des logging
-- Intégrer dans spring, configuration en définissant un fichier `logback.xml`
+- Intégré dans Spring, configuration par un fichier `logback.xml`
 
 ```xml
 <configuration>
@@ -423,3 +417,337 @@ logging.level.org.hibernate=error
 - Passer le niveau de log de `RestExceptionHandler` à `ERROR` (application.properties):
   `logging.level.com.thales.formation.config.rest.RestExceptionHandler=ERROR`
 - Constater l’impact
+
+---
+# JMS - Présentation
+
+- Java Message Service
+- Queue de message (providers / consumers)
+- Communication asynchrone sans perte (persistance des messages, reprise sur erreur...)
+- Possibilité d'émettre un message même si le "consommateur" n'est pas en ligne
+- Un message est composé :
+  - d'un header
+  - de properties
+  - d'un body
+
+---
+# JMS - cas d'usages
+
+- Echanges asynchrones entre 2 traitements Java
+- Rendre un traitement interne asynchrone tout en le fiabilisant (vs simple création de thread)
+
+![](assets/images/jms-schema.png)
+
+---
+# JMS avec Spring
+
+- Activation via l'annotation `EnableJms`
+- Définition d'une `JmsListenerContainerFactory` custom
+- Fonctionnement en embedded possible avec la conf `spring.artemis.mode=embedded`
+- Ajout des dépendances nécessaires (par exemple avec ActiveMQ Artemis) :
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-artemis</artifactId>
+</dependency>
+<dependency>
+  <groupId>org.apache.activemq</groupId>
+  <artifactId>artemis-jakarta-server</artifactId>
+  <scope>runtime</scope>
+</dependency>
+```
+
+---
+# JMS avec Spring (côté réception)
+
+```java
+@Component
+public class SendEmailListener {
+    @JmsListener(destination = "QUEUE_NAME", containerFactory = "customFactory")
+    public void receiveMessage(EmailMessage email) {
+        // l'argument correspondant au message reçu doit être sérialisable
+    }
+}
+```
+
+---
+# JMS avec Spring (côté envoi)
+
+```java
+@Service
+public class EmailService {
+    /** fourni par Spring */
+    @Autowired
+    private JmsTemplate jmsTemplate;
+    public void sendEmail(EmailMessage emailMessage) {
+        jmsTemplate.convertAndSend("QUEUE_NAME", emailMessage);
+    }
+}
+```
+
+---
+# TP15 : JMS
+
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+- Configurer Spring Boot (ajout des deps Maven et config Spring à reprendre du TP15, package `com.thales.formation.config.jms`)
+- Configurer ActiveMQ Artemis en mode embedded `spring.artemis.mode=embedded`
+- Créer le message `EmailMessage`
+  - Attributs : un email de destination et un contenu
+- Créer un `EmailService` exposant une méthode pour envoyer un email 
+  - Injecter `JmsTemplate` et l'utiliser pour l'envoi
+- Mettre à jour `TodoService` pour envoyer un message en cas de supression de Todo 
+  - S’appuyer sur une nouvelle property (`application.properties`) pour configurer l’email destinataire 
+- Créer le listener correspondant `SendEmailListener`
+  - Se contenter de logger l’information
+
+---
+# JMS - A retenir 📇
+
+- Repose sur un runtime externe (ActiveMQ)
+- Permet de mettre en place de l'asynchrone
+- Pour du Java uniquement
+  - Possibilité de s'interfacer via **Spring Messaging** avec d'autres alternatives à JMS (avec Kafka, RabbitMQ, etc.) pour faire de la communication asynchrone
+
+---
+# REST du monde
+
+- Pour de la communication synchrone via le protocole HTTP
+- REST est un ensemble de contraintes et de normes visant à standardiser les échanges HTTP par de la sémantique
+- Bonnes pratiques: 
+  - Utilisation d'un `Repository` pour isoler la couche de communication du métier
+  - Pensez aux erreurs qui peuvent survenir ! Quel doit être l'impact sur le traitement ? Faut-il retry ?
+- Depuis Spring 5, on préfère l'interface `WebClient` à `RestTemplate`
+- L'utilisation de librairies de client HTTP tierces est également possible
+  - Spring propose une intégration avec [Feign](https://spring.io/projects/spring-cloud-openfeign)
+
+---
+# TP16 : REST du monde
+
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+- Démarrer le projet `email-project` avec la commande `mvn spring-boot:run`
+  - endpoint exposé : `POST http://localhost:9090/api/email`
+  - Body attendu (exemple): `{ to: 'email', content: 'body'}`
+- Ajouter les dépendances nécessaires à la mise en place d'un client HTTP dans votre `todo-project`
+- Créer un repository `EmailRepository`
+- Utiliser un `EmailDto` correspondant à l'interface attendue 
+- A la réception d'un message par le `SendEmailLister`, appeler l'endpoint HTTP via le `EmailRepository`
+
+---
+# JTA - XA
+
+- Permet de synchroniser des transactions entre des datasources différentes
+- Les datasources doivent supporter les transactions XA (par ex. PosgreSQL et ActiveMQ)
+- Mécanisme de 2-phase commit
+  - Avant le commit, chaque datasource reçoit un premier appel "prepare"
+  - Quand toutes les datasources ont confirmées, le gestionnaire de transaction demande aux datasources de commiter
+
+![bg right:33% fit](assets/images/jta-xa.png)
+
+---
+# JTA - XA
+
+- Repose sur des transactions managers JTA OpenSource
+- Plusieurs implémentations sont compatibles avec Spring
+  - Atomikos
+  - Bitronix
+  - Narayana
+  - ou le transaction manager du server JEE
+
+---
+# JTA - XA - A retenir 📇
+
+- Ceinture bretelle
+- A un impact sur les perfs
+- Peut mener à des blocages
+- Complexe à mettre en place et maintenir
+- Liens utiles
+  - https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#io.jta
+
+---
+# OpenAPI
+
+- Spécification pour documenter les APIs HTTP
+- L'intégration avec Spring se fait par un jeu d'annotations
+- Depuis Spring Boot 3.x, nécessite la dépendance `springdoc` plutôt que `springfox` (précédemment)
+
+```xml
+<dependency>
+    <groupId>org.springdoc</groupId>
+    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    <version>2.1.0</version>
+</dependency>
+```
+
+- Swagger est une suite d'outils implémentant la spécification OpenAPI pour concevoir des API HTTP
+
+---
+# OpenAPI
+
+- Permet plusieurs approches de conception
+  - top-down: génération du code depuis la spécification OpenAPI
+  - bottom-up: génération de la documentation depuis le code de l'API
+- Des plugins Maven permettent d'automatiser ces approches
+  - `springdoc` permet de générer automatiquement la doc OpenAPI depuis votre code
+  - `swagger-codegen` permet de générer du code à partir d'une spec OpenAPI
+
+---
+# TP17 - Swagger
+
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+- Génération de la doc OpenAPI
+  - Ajouter la dépendance
+  ```xml
+  <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>2.1.0</version>
+  </dependency>
+  ```
+  - Accéder à la spec OpenAPI via le endpoint `/v3/api-docs`
+  - Accéder à la représentation Swagger UI via le endpoint `/swagger-ui/index.html`
+
+---
+# TP17 - Swagger
+
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+- Générer automatiquement la spec OpenAPI avec le plugin Maven `springdoc-maven-plugin`
+
+```xml
+<plugin>
+    <groupId>org.springdoc</groupId>
+    <artifactId>springdoc-openapi-maven-plugin</artifactId>
+    <version>1.4</version>
+    <executions>
+        <execution>
+            <phase>integration-test</phase>
+            <goals>
+                <goal>generate</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+NB: regarder la configuration dans le pom.xml du TP17
+
+---
+# TP17 - Swagger
+
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+- Dans l'autre sens, utiliser le plugin `swagger-code-gen` pour générer du code à partir d'une spec OpenAPI
+- Une spec OpenAPI est dispo dans `src/main/resources/openapi.json` du TP17
+- Exécuter le plugin via la commande `mvn clean compile`
+
+NB: 
+- se référer à la doc du plugin maven https://github.com/swagger-api/swagger-codegen/tree/master/modules/swagger-codegen-maven-plugin
+- le code généré nécessite des dépendances spécifiques qu'il faudra rajouter dans le pom.xml du projet, cf. https://github.com/swagger-api/swagger-codegen/issues/5410
+
+---
+# Spring AOP
+
+- Objectif: Venir rajouter du comportement autour de classes, fonctions... (cross-cutting concerns)
+
+- Dépendance Spring Boot dispo
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-aop</artifactId>
+</dependency>
+```
+
+- Annotation `@Aspect` à positionner sur un `@Component`
+
+- Définition d’un point cut (à quel endroit se place l’exécution du comportement), à placer sur la méthode à appeler
+
+---
+# AOP - Terminologie
+
+- **Aspect**: La problématique spécifique que l’on veut ajouter transversalement à notre architecture : par exemple la gestion des transactions avec la base de données
+- **JoinPoint**: Le point dans le flot d’exécution d’un programme à partir duquel on souhaite ajouter la logique d’exécution de l’aspect
+- **Advice**: L’action particulière de l’aspect à exécuter quand le programme atteint le point de jonction
+- **Pointcut**: Une expression qui définit l’ensemble des joinpoints éligibles pour l'advice
+
+<!-- 
+Source: https://gayerie.dev/docs/spring/spring/aop.html 
+-->
+
+---
+# Spring AOP
+
+La value de l’annotation définit le pointcut (ex : package visé, caractéristique de la fonction, présence d’une annotation…)
+
+`@Around` : Enveloppe l’exécution de la cible
+`@Before` : Avant d’appeler la cible
+`@After` : Après avoir appelé la cible
+`@AfterReturning` : Après avoir appelé la cible (résultat OK)
+`@AfterThrowing` : Après avoir appelé la cible (et si celle-ci génère une exception)
+
+Utiliser `ProceedingJoinPoint pjp` pour récupérer des infos sur l’appel
+
+---
+# Spring AOP
+
+> Cas d'utilisations classiques
+- Cibler les fonctions d'un package / d'une classe avec `@Around("* my.package..*(..)")`
+- Cibler des méthodes annotées
+  - Créer une annotation
+  ```java
+  @Target(ElementType.METHOD)
+  @Retention(RetentionPolicy.RUTIME)
+  public @interface LogExecutionTime {}
+  ```
+  - puis l'utiliser dans un pointcut `annotation(myAnnotation)`
+  ```java
+  @Around("@annotation(let)")
+  public Object logExecutionTime(ProceedingJoinPoint jp, LogExecutionTime let) {
+    return jp.proceed();
+  }
+  ```
+
+<!-- 
+Multitude d'autres possibilités !
+-->
+
+---
+# TP18 - Spring AOP
+
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+- Créer une annotation `LogExecutionTime`
+- Créer un aspect `LogExecutionTimeAspect` qui va intercepter les méthodes annotées `LogExecutionTime` et logger leur durée d'exécution
+
+---
+# Spring AOP - A retenir 📇
+
+- A utiliser avec parcimonie !
+- Peut avoir un impact sur les perfs
+- Peut masquer du métier (et perdre en maintenabilité)
+- Ralentit le temps de démarrage
+> Préciser au maximum la cible (packages, classes, ...) pour limiter le scan des classes
+
+---
+# Design pattern
+
+- GoF
+  - Gang of Four (1994): Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides
+  - 23 patterns
+    - Creational
+    - Structural
+    - Behavioral
+- EIP
+  - Entreprise Integration Pattern
+  - 65 patterns de plus haut niveau
+    - ESB, Apache Camel, Spring Integration, ETL, etc.
+
+> Bon point d'entrée: https://refactoring.guru/

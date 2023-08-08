@@ -52,13 +52,13 @@ Les fondamentaux ( et un peu plus 🚀)*
 
 # Environnement de TP (1/2)
 
-> **JDK 11-17**:  Installer une Open JDK _via https://adoptium.net/_
+> **JDK 11-17**:  Installer une Open JDK via https://adoptium.net/
 
 - Installation dans le répertoire souhaité
 - Ajout de la variable d’environnement `JAVA_HOME` pointant vers le répertoire d’installation du JDK
 - Ajout du path suivant à la variable d’environnement PATH : `%JAVA_HOME%\bin`
 
-> **Maven** : _https://maven.apache.org/download.cgi_
+> **Maven** : https://maven.apache.org/download.cgi
 
 - Dézip dans le répertoire souhaité
 - Ajout de la variable d’environnement `MAVEN_HOME` pointant sur le répertoire maven
@@ -178,6 +178,20 @@ Application permettant de créer une liste de tâches
 
 ---
 
+# Conception générale - Autres modèles
+
+Il existe d'autres modèles pour structurer votre application :
+
+- la clean architecture
+- l'architecture hexagonale
+
+dont l'objectif commun est entre autres d'isoler la logique métier des détails techniques
+
+![bg 70% right vertical](./assets/images/Architecture_hexagonale.svg)
+![bg 70% right](./assets/images/clean-architecture-diagram.jpg)
+
+---
+
 # Maven
 
 > Alternative: gradle
@@ -190,7 +204,6 @@ Application permettant de créer une liste de tâches
 
 > Commandes classiques:
 > `mvn clean install`
-> `mvn clean install -DskipTests`
 ![bg left:40% 80%](./assets/images/maven_lifecycle.png)
 
 ---
@@ -433,7 +446,7 @@ my-app/
 </plugin>
 ```
 
-- Mais également un war (et depuis peu, même une image Docker)
+- Mais également un war, une image Docker, etc.
 
 ---
 
@@ -898,6 +911,28 @@ Au niveau du contrôleur REST, récupérer les Todo et les transformer en Dto
 - Attention à la génération de code et aux preprocessors maven (_e.g. Mapstruct_) 
 
 ---
+# Utilisation des records
+
+- Dispo depuis JDK 14
+- Permet de
+  - définir un POJO immutable de façon concise
+  - implémenter automatiquement des méthodes orientées données (constructeur, getters, equals, hashCode, toString, ...)
+
+```java
+public record Todo (Long id, String name, TodoStatus status) {}
+```
+---
+# TP #4 bis - Records
+
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+- Retirer la dépendance Lombok
+- Remplacer POJOs Todo et TodoDTO par des records
+- Reprendre le @Controller et le @Service
+- Tester l'application pour vérifier que toutes les fonctionnalités sont encore présentes
+
+---
 # Mapstruct
 
 - Librairie Java permettant de faire du "mapping" entre les objets
@@ -1011,10 +1046,13 @@ Use case : enrichissement complexe d’un élément mappé (exemple : faire appe
 ➡  `@Mapper(unmappedTargetPolicy = ReportingPolicy.ERROR)`
 
 ---
-# TP #5 - Mapstruct
+# TP #5 et #5 bis - Mapstruct
 
 <!-- _class: invert -->
 <!-- _backgroundImage: none -->
+
+Le TP #5 utilise Lombok, le TP #5 bis les records
+🚨 Une configuration mvn particulière est nécessaire pour faire cohabiter Lombok et Mapstruct
 
 1. Ajouter les dépendances MapStruct: cf. [documentation officielle](https://mapstruct.org/documentation/stable/reference/html/#_apache_maven)
 2. Créer le Mapper `TodoMapper.java`

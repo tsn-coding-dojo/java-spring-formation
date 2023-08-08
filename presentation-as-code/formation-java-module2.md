@@ -409,6 +409,8 @@ Enfin venir étendre une interface avec le Repo Spring + le repo Custom rend tou
 
 ▌ **Named query pour les perfs pures VS query dynamiques…**
 
+▌ **🚨 Les `@Entity` ne peuvent pas être des `record`**
+
 ▌ **Liens utiles :**
 
 [Doc officielle](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/)
@@ -432,9 +434,15 @@ Enfin venir étendre une interface avec le Repo Spring + le repo Custom rend tou
 ```
 
 - Annoter la classe Todo comme il se doit (`@Entity`, `@Id`)
-- Créer le repository de Todo `PagingAndSortingRepository`
-- Implémenter la partie `create` et `findAllNotCompleted` des Todo
+- Créer le repository de Todo implémentant l'interface `JpaRepository`
+- Déclarer la méthode `findByStatus` dans le TodoRepository
 - Câbler le `TodoService` sur le `TodoRepository`
+- Utiliser la [console H2](http://localhost:8086/h2-console) pour visualiser le contenu de la base de données
+
+<!-- 
+Il est important de montrer au stagiaire que dans la correction du TP6, les méthodes du service `update` et `complete` 
+ne fonctionnent pas à cause de l'absence de contexte transactionnel
+-->
 
 ---
 # Les transactions 
@@ -658,6 +666,37 @@ verify(mockedList).get(0);
 ```
 
 ---
+# Test unitaires - mutation
+
+▌ [PiTest](https://pitest.org/)
+
+- Améliorer la robustesse de vos tests !
+  - Faire passer vos tests sur des versions "mutées" de votre code
+  - Si le test est toujours passant, un "mutant" a survécu, il faut rajouter un test !
+
+- Après installation et configuration des dépendances et plugins JaCoCo (code coverage) et PiTest (mutation testing)
+```shell
+mvn test
+mvn jacoco:report           # construit un rapport de code coverage
+mvn pitest:mutationCoverage # construit un rapport de mutation dans target/pit-reports
+```
+
+---
+# Tests unitaires - mutation (rapport)
+
+> Seul test existant
+```java
+    @Test
+    public void whenPalindrom_thenAccept() {
+        MutantClass palindromeTester = new MutantClass();
+        assertTrue(palindromeTester.isPalindrome("noon"));
+    }
+```
+
+> Rapport
+![width:700px](assets/images/mutation-testing.jpg)
+
+---
 # Test unitaires - Spring Boot
 
 - Context d’exécution : `@ExtendWith(SpringExtension.class)`
@@ -731,6 +770,18 @@ Via `@MockBean`
 
 Faire un test s’assurant que findAllNotCompleted retourne bien 2 éléments
 
+<!-- 
+Exécuter les commandes 
+
+```
+mvn test
+mvn jacoco:report
+mvn pitest:mutationCoverage
+```
+
+et montrer le rapport dans target/pitest pour expliquer le principe du mutation testing
+-->
+
 ---
 # Test unitaires - A retenir 📇
 
@@ -738,14 +789,24 @@ Faire un test s’assurant que findAllNotCompleted retourne bien 2 éléments
 - Les services / configuration de test doit se rapprocher autant de possible de la prod afin de limiter les risques d’erreur
 - Ne tester pas 100 fois la même chose
 - Un test pour éviter une régression
+- Utiliser l'approche TDD si possible (Red-Green-Refactor)
+- Améliorer la robustesse de vos tests avec la mutation
+
+---
+# TP Test Driven Development
+<!-- _class: invert -->
+<!-- _backgroundImage: none -->
+
+On déroule ensemble le kata [FizzBuzz](https://codingdojo.org/kata/FizzBuzz/)
 
 ---
 # HibernateValidator - Validation des entrées
 
 - Implémentation de Bean Validation (JSR 380)
-
+- Bootstrap par `spring-boot-starter-validation`
 - Objectif : Vérifier la validité des données au plus tôt
 -> Validation des entrées (REST, JMS…)
+- 🚨 Ne pas confondre avec l'ORM Hibernate
 
 ---
 # HibernateValidator - Validation des entrées
@@ -815,7 +876,7 @@ Use case : Un même `DTO` utilisé dans deux WebService (_e.g. : create / update
 - Créer une annotation `@Interface` "NomDuGroup"
 - Déclarer le groupe au niveau des validateurs : `@NotNull(groups = { Update.class })`
 - Préciser le groupe à utiliser : `@Validated({MyGroup.class})` au lieu de `@Valid`
-- Annotation non JSR
+- Annotation `@Validated` non JSR
 
 ---
 # TP 9 - HibernateValidator
@@ -831,7 +892,7 @@ Use case : Un même `DTO` utilisé dans deux WebService (_e.g. : create / update
 ---
 # HibernateValidator - A retenir 📇
 
-- Utilisez les annotations de la JSR plutôt que celles d’Hibernate
+- Utilisez les annotations de la JSR plutôt que celles d’Hibernate Validator
 - Valider autant que possible les entrées du système
 - Ne jamais faire confiance à l’appelant (ex : GUI)
 - Pensez à valider les sous-objets !
