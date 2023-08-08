@@ -1,9 +1,8 @@
 package com.thales.formation.repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import com.thales.formation.model.Todo;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 public class TodoCustomRepositoryImpl implements TodoCustomRepository {
 

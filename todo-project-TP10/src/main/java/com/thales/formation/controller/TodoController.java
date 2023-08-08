@@ -1,20 +1,14 @@
 
 package com.thales.formation.controller;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.thales.formation.dto.TodoDto;
 import com.thales.formation.service.TodoService;
 import com.thales.formation.validator.group.TodoDtoValidationOnUpdate;
+import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/todos")

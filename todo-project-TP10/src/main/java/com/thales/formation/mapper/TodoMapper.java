@@ -1,15 +1,10 @@
 package com.thales.formation.mapper;
 
-import java.util.List;
-
-import org.mapstruct.DecoratedWith;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.ReportingPolicy;
-
 import com.thales.formation.dto.TodoDto;
 import com.thales.formation.model.Todo;
+import org.mapstruct.*;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 @DecoratedWith(TodoMapperDecorator.class)
@@ -26,5 +21,4 @@ public interface TodoMapper {
   TodoDto modelToDto(Todo todo);
 
   List<TodoDto> modelToDto(Iterable<Todo> todo);
-
 }

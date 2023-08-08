@@ -33,7 +33,7 @@ import com.thales.formation.repository.TodoRepository;
 import com.thales.formation.service.TodoService;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = Application.class)
+@SpringBootTest(classes = TodoProjectApplication.class)
 class TodoServiceITest {
 
   @Autowired
