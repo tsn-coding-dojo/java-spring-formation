@@ -2,6 +2,7 @@ package com.thales.formation.service;
 
 import java.util.Optional;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.thales.formation.dto.TodoDto;
@@ -29,7 +30,7 @@ public class TodoService {
 
   public Todo findById(Long id) {
     Optional<Todo> optTodo = todoRepository.findById(id);
-    return optTodo.get();
+    return optTodo.orElseThrow(EntityNotFoundException::new);
   }
 
   public Todo create(TodoDto todoDto) {
