@@ -3,8 +3,7 @@ package com.thales.formation.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
+import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
