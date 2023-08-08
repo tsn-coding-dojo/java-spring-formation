@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.thales.formation.dto.TodoDto;
-import com.thales.formation.mapper.TodoMapper;
 import com.thales.formation.service.TodoService;
 
 @RestController
@@ -19,22 +18,19 @@ public class TodoController {
 
   private final TodoService todoService;
 
-  private final TodoMapper todoMapper;
-
-  public TodoController(TodoService todoService, TodoMapper todoMapper) {
+  public TodoController(TodoService todoService) {
     super();
     this.todoService = todoService;
-    this.todoMapper = todoMapper;
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/")
   public List<TodoDto> findAll() {
-    return todoMapper.modelToDto(todoService.findAllNotCompleted());
+    return todoService.findAllNotCompleted();
   }
 
   @RequestMapping(method = RequestMethod.POST, value = "/")
   public TodoDto create(@RequestBody(required = true) TodoDto todoDto) {
-    return todoMapper.modelToDto(todoService.create(todoDto));
+    return todoService.create(todoDto);
   }
 
   @RequestMapping(method = RequestMethod.PUT, value = "/{id}")

@@ -1,16 +1,16 @@
 package com.thales.formation.service;
 
+import java.util.List;
 import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.thales.formation.dto.TodoDto;
 import com.thales.formation.enums.TodoStatus;
 import com.thales.formation.mapper.TodoMapper;
 import com.thales.formation.model.Todo;
 import com.thales.formation.repository.TodoRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 //@Transactional
@@ -22,8 +22,8 @@ public class TodoService {
   @Autowired
   private TodoRepository todoRepository;
 
-  public Iterable<Todo> findAllNotCompleted() {
-    return todoRepository.findByStatus(TodoStatus.TODO);
+  public List<TodoDto> findAllNotCompleted() {
+    return todoMapper.modelToDto(todoRepository.findByStatus(TodoStatus.TODO));
   }
 
   public Todo findById(Long id) {
@@ -32,11 +32,11 @@ public class TodoService {
   }
 
   //  @Transactional
-  public Todo create(TodoDto todoDto) {
+  public TodoDto create(TodoDto todoDto) {
     Todo todo = todoMapper.dtoToModel(todoDto);
     todo.setStatus(TodoStatus.TODO);
 
-    return todoRepository.save(todo);
+    return todoMapper.modelToDto(todoRepository.save(todo));
   }
 
   //  @Transactional
