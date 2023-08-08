@@ -1,26 +1,16 @@
 
 package com.thales.formation.controller;
 
-import java.security.Principal;
-import java.util.List;
-
-import javax.validation.Valid;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.thales.formation.dto.TodoDto;
 import com.thales.formation.service.TodoService;
 import com.thales.formation.validator.group.TodoDtoValidationOnUpdate;
+import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/todos")
@@ -39,7 +29,7 @@ public class TodoController {
     return todoService.findAllNotCompleted();
   }
 
-  @PreAuthorize("hasAuthority('add') || hasRole('ROLE_ADMIN')")
+  @PreAuthorize("hasAuthority('add')")
   //  @PostAuthorize("returnObject.name == 'POSTAUTH'")
   @PostMapping(value = "/")
   public TodoDto create(@RequestBody(required = true) @Valid TodoDto todoDto, Principal principal) {
@@ -65,7 +55,7 @@ public class TodoController {
     todoService.delete(id, version);
   }
 
-  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @PreAuthorize("hasAuthority('deleteAll')")
   @DeleteMapping(value = "/")
   public void deleteAll() {
     todoService.deleteAll();

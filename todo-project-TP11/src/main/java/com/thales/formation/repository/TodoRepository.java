@@ -1,11 +1,10 @@
 package com.thales.formation.repository;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
-
 import com.thales.formation.enums.TodoStatus;
 import com.thales.formation.model.Todo;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TodoRepository extends TodoCustomRepository, PagingAndSortingRepository<Todo , Long> {
+public interface TodoRepository extends TodoCustomRepository, JpaRepository<Todo , Long> {
 
 	Iterable<Todo> findByStatus(TodoStatus todoStatus);
 	
