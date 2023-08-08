@@ -5,36 +5,41 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.thales.formation.Application;
 import com.thales.formation.enums.TodoStatus;
 import com.thales.formation.model.Todo;
 import com.thales.formation.repository.TodoRepository;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
-public class TodoServiceSpringBootTest {
- 
-	@MockBean
-	private TodoRepository todoRepositoryMock;
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+class TodoServiceSpringBootTest {
 
-	@Autowired
-	private TodoService todoService;
+  @MockBean
+  private TodoRepository todoRepositoryMock;
 
-	@Test
-	public void shouldFindAllNotCompleted() {
-		when(todoRepositoryMock.findByStatus(TodoStatus.TODO))
-				.thenReturn(
-						Arrays.asList(
-								(new Todo()).setName("toto").setStatus(TodoStatus.TODO),
-								(new Todo()).setName("tata").setStatus(TodoStatus.TODO)));
-		assertThat(todoService.findAllNotCompleted()).hasSize(2);
-	}
+  @Autowired
+  private TodoService todoService;
+
+  @Test
+  void shouldFindAllNotCompleted() {
+    when(todoRepositoryMock.findByStatus(TodoStatus.TODO))
+        .thenReturn(
+            Arrays.asList(mockTodo("toto", TodoStatus.TODO),
+                mockTodo("toto", TodoStatus.TODO)));
+    assertThat(todoService.findAllNotCompleted()).hasSize(2);
+  }
+
+  private Todo mockTodo(String name, TodoStatus status) {
+    Todo todo = new Todo();
+    todo.setName(name);
+    todo.setStatus(status);
+    return todo;
+  }
 
 }
