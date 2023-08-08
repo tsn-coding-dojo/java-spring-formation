@@ -1,16 +1,5 @@
 package com.thales.formation.service;
 
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.thales.formation.dto.TodoDto;
 import com.thales.formation.enums.TodoStatus;
 import com.thales.formation.exception.AppNotFoundException;
@@ -19,86 +8,90 @@ import com.thales.formation.mapper.TodoMapper;
 import com.thales.formation.message.EmailMessage;
 import com.thales.formation.model.Todo;
 import com.thales.formation.repository.TodoRepository;
-
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Transactional
 @Service
 public class TodoService {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+  private final UserService userService;
 
-	@Autowired
-	private TodoMapper todoMapper;
+  private final EmailService emailService;
 
-	@Autowired
-	private TodoRepository todoRepository;
-	@Autowired
-	private UserService userService;
-	@Autowired
-	private EmailService emailService;
-	@Autowired
-	private SecurityService securityService;
+  private final TodoMapper todoMapper;
 
-	@Value("${app.email.supervisor}")
-	private String emailSupervisor;
+  private final TodoRepository todoRepository;
 
-	public Iterable<Todo> findAllNotCompleted() {
-		return todoRepository.findByStatus(TodoStatus.TODO);
-	}
+  @Value("${app.email.supervisor}")
+  private String emailSupervisor;
 
-	public Todo findById(Long id) {
-		Optional<Todo> optTodo = todoRepository.findById(id);
-		if (!optTodo.isPresent()) {
-			throw new AppNotFoundException("Todo with id '" + id + "' does not exist");
-		}
-		return optTodo.get();
-	}
+  public TodoService(UserService userService, EmailService emailService, TodoMapper todoMapper, TodoRepository todoRepository) {
+    super();
+    this.userService = userService;
+    this.emailService = emailService;
+    this.todoMapper = todoMapper;
+    this.todoRepository = todoRepository;
+  }
 
-	public Todo create(TodoDto todoDto) {
-		Todo todo = todoMapper.dtoToModel(todoDto);
-		todo.setStatus(TodoStatus.TODO);
-		todo.setUser(userService.getCurrentUser());
-		return todoRepository.save(todo);
-	}
+  public List<TodoDto> findAllNotCompleted() {
+    return todoMapper.modelToDto(todoRepository.findByStatus(TodoStatus.TODO));
+  }
 
-	public void update(TodoDto todoDto) {
-		Todo todo = this.findById(todoDto.getId());
-		todo.setName(todoDto.getName());
-		todoRepository.updateWithControl(todo, todoDto.getVersion());
-	}
+  public Todo findById(Long id) {
+    Optional<Todo> optTodo = todoRepository.findById(id);
+    return optTodo
+            .orElseThrow(() -> new AppNotFoundException("Todo with id '" + id + "' does not exist"));
+  }
 
-	public void complete(Long todoId, Long version) {
-		Todo todo = this.findById(todoId);
-		if (todo.getStatus() != TodoStatus.TODO) {
-			throw new AppPreconditionFailedException("Todo with id '" + todoId + "' is already completed");
-		}
-		todo.setStatus(TodoStatus.COMPLETED);
-		todoRepository.updateWithControl(todo, version);
-	}
+  public TodoDto create(TodoDto todoDto, String user) {
+    Todo todo = todoMapper.dtoToModel(todoDto);
+    todo.setStatus(TodoStatus.TODO);
+    todo.setUser(user);
+    return todoMapper.modelToDto(todoRepository.save(todo));
+  }
 
-	public void delete(Long id, Long version) {
-		Todo todo = this.findById(id);
-		todoRepository.deleteWithControl(todo, version);
+  public void update(TodoDto todoDto) {
+    Todo todo = this.findById(todoDto.getId());
+    todo.setName(todoDto.getName());
+    todoRepository.updateWithControl(todo, todoDto.getVersion(), userService.getCurrentAuth());
+  }
 
-		// Sending a deletion email
-		EmailMessage emailMessage = new EmailMessage(emailSupervisor, securityService.getAuthenticationUserLogin() + " deleted todo id=" + id);
-		emailService.sendEmail(emailMessage);
-	}
+  public void complete(Long todoId, Long version) {
+    Todo todo = this.findById(todoId);
+    if (todo.getStatus() != TodoStatus.TODO) {
+      throw new AppPreconditionFailedException("Todo with id '" + todoId + "' is already completed");
+    }
+    todo.setStatus(TodoStatus.COMPLETED);
+    todoRepository.updateWithControl(todo, version, userService.getCurrentAuth());
+  }
 
-	public void deleteAll() {
-		todoRepository.deleteAll();
-	}
+  public void delete(Long id, Long version) {
+    Todo todo = this.findById(id);
+    todoRepository.deleteWithControl(todo, version, userService.getCurrentAuth());
+    // Sending a deletion email
+    EmailMessage emailMessage = new EmailMessage(emailSupervisor, userService.getCurrentAuth().name() + " deleted todo id=" + id);
+    emailService.sendEmail(emailMessage);
+  }
 
-	public void exportTodos() {
-		final AtomicInteger nbLines = new AtomicInteger();
-		todoRepository.streamAllToExport().forEach(todo -> {
-			log.info(todo.getName() + " - " + todo.getStatus());
-			nbLines.incrementAndGet();
-			entityManager.detach(todo);
-		});
-	}
+  public void deleteAll() {
+    todoRepository.deleteAll();
+  }
+
+  public void exportTodos() {
+    final AtomicInteger nbLines = new AtomicInteger();
+    todoRepository.streamAllToExport().forEach(todo -> {
+      log.info(todo.getName() + " - " +todo.getStatus());
+      nbLines.incrementAndGet();
+      todoRepository.detach(todo);
+    });
+  }
 
 }

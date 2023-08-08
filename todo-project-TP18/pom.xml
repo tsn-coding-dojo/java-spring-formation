@@ -1,68 +1,71 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
-	<groupId>com.thales.formation</groupId>
-	<artifactId>todo-project-tp18</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.4.4</version>
+		<version>3.1.2</version>
+		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-
+	<groupId>com.thales.formation</groupId>
+	<artifactId>todo-project-TP18</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>todo-project-TP18</name>
+	<description>Todo project TP18</description>
 	<properties>
-		<java.version>1.8</java.version>
-		<org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
-		<swagger.version>1.5.19</swagger.version>
-		<swagger.maven.plugin>3.0.20</swagger.maven.plugin>
+		<java.version>17</java.version>
+		<org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+		<org.projectlombok.version>1.18.20</org.projectlombok.version>
+		<lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+		<com.ninja-squad.DbSetup.version>2.1.0</com.ninja-squad.DbSetup.version>
+		<org.pitest.pitest-maven.version>1.14.2</org.pitest.pitest-maven.version>
+		<org.pitest.pitest-junit5-plugin.version>1.2.0</org.pitest.pitest-junit5-plugin.version>
+		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<org.jacoco.jacoco-maven-plugin.version>0.8.10</org.jacoco.jacoco-maven-plugin.version>
+		<springdoc.version>2.1.0</springdoc.version>
 	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mapstruct</groupId>
-			<artifactId>mapstruct</artifactId>
-			<version>${org.mapstruct.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.liquibase</groupId>
-			<artifactId>liquibase-core</artifactId>
-			<version>4.3.5</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-artemis</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>artemis-jakarta-server</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -75,210 +78,183 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-		</dependency>
+
 		<dependency>
 			<groupId>com.ninja-squad</groupId>
 			<artifactId>DbSetup</artifactId>
-			<version>2.1.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-activemq</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-broker</artifactId>
-		</dependency>
-
-		<!-- Swagger -->
-
-		<dependency>
-			<groupId>io.swagger</groupId>
-			<artifactId>swagger-core</artifactId>
-			<version>${swagger.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-		</dependency>
-
-		<!-- END swagger -->
-		<!-- SWAGGER UI -->
-
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-			<version>2.9.2</version>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<version>2.9.2</version>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-bean-validators</artifactId>
-			<version>2.9.2</version>
-		</dependency>
-
-		<!-- END -->
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-aop</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<version>${com.ninja-squad.DbSetup.version}</version>
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.pitest</groupId>
+			<artifactId>pitest-maven</artifactId>
+			<version>${org.pitest.pitest-maven.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${org.projectlombok.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${org.mapstruct.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
-
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<executable>true</executable>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
 				</configuration>
+				<executions>
+					<execution>
+						<id>pre-integration-test</id>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>post-integration-test</id>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
-					<source>1.8</source> <!-- depending on your project -->
-					<target>1.8</target> <!-- depending on your project -->
+					<source>17</source>
+					<target>17</target>
+					<!-- See https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html -->
+					<!-- Classpath elements to supply as annotation processor path. If specified, the compiler   -->
+					<!-- will detect annotation processors only in those classpath elements. If omitted, the     -->
+					<!-- default classpath is used to detect annotation processors. The detection itself depends -->
+					<!-- on the configuration of annotationProcessors.                                           -->
+					<!--                                                                                         -->
+					<!-- According to this documentation, the provided dependency processor is not considered!   -->
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.mapstruct</groupId>
 							<artifactId>mapstruct-processor</artifactId>
 							<version>${org.mapstruct.version}</version>
 						</path>
-
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.18</version>
+							<version>${org.projectlombok.version}</version>
 						</path>
-						<!-- This is needed when using Lombok 1.18.16 and above -->
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok-mapstruct-binding</artifactId>
-							<version>0.2.0</version>
+							<version>${lombok-mapstruct-binding.version}</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
-
 			<plugin>
-				<groupId>org.eclipse.m2e</groupId>
-				<artifactId>lifecycle-mapping</artifactId>
-				<version>1.0.0</version>
-				<configuration>
-					<lifecycleMappingMetadata>
-						<pluginExecutions>
-							<pluginExecution>
-								<pluginExecutionFilter>
-									<groupId>io.swagger</groupId>
-									<artifactId>swagger-codegen-maven-plugin</artifactId>
-									<versionRange>[2.0,)</versionRange>
-									<goals>
-										<goal>generate</goal>
-									</goals>
-								</pluginExecutionFilter>
-								<action>
-									<ignore />
-								</action>
-							</pluginExecution>
-
-						</pluginExecutions>
-					</lifecycleMappingMetadata>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>io.swagger.codegen.v3</groupId>
-				<artifactId>swagger-codegen-maven-plugin</artifactId>
-				<version>${swagger.maven.plugin}</version>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${org.jacoco.jacoco-maven-plugin.version}</version>
 				<executions>
 					<execution>
-						<id>todos</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>${org.pitest.pitest-maven.version}</version>
+				<configuration>
+					<targetClasses>
+						<param>com.thales.formation.mutation.*</param>
+					</targetClasses>
+					<targetTests>
+						<param>com.thales.formation.mutation.*</param>
+					</targetTests>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-junit5-plugin</artifactId>
+						<version>${org.pitest.pitest-junit5-plugin.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-maven-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<id>integration-test</id>
 						<goals>
 							<goal>generate</goal>
 						</goals>
-						<configuration>
-							<inputSpec>${project.basedir}/src/main/resources/openapi/todos-v1.json</inputSpec>
-							<language>spring</language>
-							<apiPackage>com.thales.formation.api.layer.prive.v1</apiPackage>
-							<modelPackage>com.thales.formation.api/modele.dto.prive.v1</modelPackage>
-							<output>${project.build.directory}/generated-sources/swagger</output>
-							<generateModelTests>false</generateModelTests>
-							<generateModelDocumentation>false</generateModelDocumentation>
-							<generateApiDocumentation>false</generateApiDocumentation>
-							<generateApiTests>false</generateApiTests>
-							<generateSupportingFiles>false</generateSupportingFiles>
-							<configOptions>
-								<dateLibrary>java8-localdatetime</dateLibrary>
-								<interfaceOnly>true</interfaceOnly>
-								<serializableModel>true</serializableModel>
-							</configOptions>
-
-						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-
-
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>add-source</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-
-						<configuration>
-							<sources>
-								<source>${project.build.directory}/generated-sources/swagger/src/main/java</source>
-							</sources>
-
-						</configuration>
-					</execution>
-
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.bsc.maven</groupId>
-				<artifactId>maven-processor-plugin</artifactId>
 				<configuration>
-					<defaultOutputDirectory>${project.build.directory}/generated-sources/mapper</defaultOutputDirectory>
-					<processors>
-						<processor>lombok.launch.AnnnotationProcessorHider$AnnotationProcessor</processor>
-
-					</processors>
-
+					<apiDocsUrl>http://localhost:8097/v3/api-docs</apiDocsUrl>
 				</configuration>
-
 			</plugin>
-
-
+			<!-- SWAGGER CODEGEN generation -->
+<!--			<plugin>-->
+<!--				<groupId>io.swagger</groupId>-->
+<!--				<artifactId>swagger-codegen-maven-plugin</artifactId>-->
+<!--				<version>2.4.32</version>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<goals>-->
+<!--							<goal>generate</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<inputSpec>${project.basedir}/src/main/resources/swagger.yaml</inputSpec>-->
+<!--							<language>java</language>-->
+<!--							<configOptions>-->
+<!--								<sourceFolder>src/gen/java/main</sourceFolder>-->
+<!--							</configOptions>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
 		</plugins>
 	</build>
 

@@ -9,16 +9,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EmailMessage implements Serializable {
-	
-	private String to;
-    private String content;
+
+    private String to;
+    private String body;
 
     public EmailMessage() {
     }
 
-    public EmailMessage(String to, String content) {
+    public EmailMessage(String to, String body) {
         this.to = to;
-        this.content = content;
+        this.body = body;
     }
-
 }
