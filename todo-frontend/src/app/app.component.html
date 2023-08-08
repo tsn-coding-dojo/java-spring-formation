@@ -1,0 +1,58 @@
+<!--The content below is only a placeholder and can be replaced.-->
+
+<div class="container">
+  <div style="text-align:center">
+    <h1>
+      <img width="100px" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+      Welcome to My todos !
+    </h1>
+  </div>
+
+  <div class="alert alert-danger" role="alert" *ngIf="globalErrorService.lastError"> 
+    <button type="button" class="btn-close" style="width: 10px; height: 10px;" data-dismiss="alert" aria-label="Close" (click)="globalErrorService.clear()"></button>
+    {{globalErrorService.lastError}}
+  </div>
+
+  <h2>Login :</h2>
+  <div *ngIf="session">
+    Hello <span class="text-primary font-weight-bold">{{session.login}}</span>
+    <button class="btn btn-danger mx-2" (click)="logout()">Logout</button>
+  </div>
+  <form class="row w-50" *ngIf="!session" (submit)="submitLogin()">
+    <input class="form-control col me-2" type="text" placeholder="login" [(ngModel)]="login" id="login" name="login">
+    <input class="form-control col me-2" type="password" placeholder="password" [(ngModel)]="password" id="password" name="password" autocomplete="off">
+    <input type="submit" style="min-width: 100px;" class="btn btn-primary col" value="Login">
+  </form>
+
+  <h2 class="mt-4">{{(!todo.id) ? 'Add' : 'Update'}} a todo :</h2>
+  <form class="row" (submit)="submitCreateOrUpdate()">
+    <input class="form-control col me-2" type="text" placeholder="name" [(ngModel)]="todo.name" name="todoName">
+    <input type="submit" class="btn btn-primary col-1 me-2" [value]="(!todo.id) ? 'Add' : 'Update'">
+    <input type="button" class="btn btn-danger col-1" value="Cancel" (click)="cancel()">
+  </form>
+
+  <h2 class="mt-4">My todos:</h2>
+  <div class="d-flex justify-content-end gap-2 mb-2">
+      <button class="btn btn-secondary" (click)="refresh()">Refresh</button>
+      <button class="btn btn-danger" (click)="deleteAll()">Delete all</button>
+  </div>
+  <div *ngIf="!todos?.length" class="text-muted">
+    No todo...
+  </div>
+  <ul class="list-group">
+    <li *ngFor="let todo of todos" class="list-group-item">
+      <div class="d-flex">
+        <div class="p-2">{{todo.id}}</div>
+        <div class="p-2 flex-grow-1 text-primary font-weight-bold">{{todo.name}}
+        <span *ngIf="todo.user" class="col ml-2 text-muted">({{todo.user}})</span>
+        </div>
+        <div class="p-2">
+          <button class="btn btn-success" (click)="complete(todo)">Done</button>
+          <button class="btn btn-secondary mx-2" (click)="update(todo)">Update</button>
+          <button class="btn btn-danger" (click)="delete(todo)">X</button>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+</div>
