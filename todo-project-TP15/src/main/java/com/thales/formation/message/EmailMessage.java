@@ -9,8 +9,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EmailMessage implements Serializable {
-	
-	private String to;
+
+    private String to;
     private String body;
 
     public EmailMessage() {
@@ -20,5 +20,4 @@ public class EmailMessage implements Serializable {
         this.to = to;
         this.body = body;
     }
-
 }

@@ -11,10 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class SendEmailListener {
-	
-	@JmsListener(destination = JmsProperties.SEND_EMAIL)
+	@JmsListener(destination = JmsProperties.SEND_EMAIL, containerFactory = "localFactory")
     public void receiveMessage(EmailMessage email) {
-		log.info("Sending email to <" + email.getTo() + ">");
+		log.info("Sending email to <" + email.getTo() + "> : " + email.getBody());
     }
 
 }
