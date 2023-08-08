@@ -1,4 +1,4 @@
-package com.thales.formation.email.dto;
+package com.thales.formation.dto;
 
 public class EmailDto {
 	
