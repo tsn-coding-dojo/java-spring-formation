@@ -1,54 +1,55 @@
 package com.thales.formation.repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.thales.formation.config.security.SecurityProperties;
 import com.thales.formation.exception.AppConflictException;
 import com.thales.formation.exception.AppForbiddenException;
 import com.thales.formation.model.Todo;
-import com.thales.formation.service.SecurityService;
+import com.thales.formation.service.domain.AuthData;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 
 public class TodoCustomRepositoryImpl implements TodoCustomRepository {
 
-	@PersistenceContext
-	private EntityManager em;
-	
-	@Autowired
-	private SecurityService securityService;
+  @PersistenceContext
+  private EntityManager em;
 
-	@Override
-	public void updateWithControl(Todo todo, Long version) {
-		this.canUpdateOrDelete(todo, version);
-		// Nothing to do, it will be handled by the transaction
-	}
+  @Override
+  public void updateWithControl(Todo todo, Long version, AuthData authData) {
+    this.canUpdateOrDelete(todo, version, authData);
+    // Nothing to do, it will be handled by the transaction
+  }
 
-	@Override
-	public void deleteWithControl(Todo todo, Long version) {
-		this.canUpdateOrDelete(todo, version);
-		em.remove(todo);
-	}
+  @Override
+  public void deleteWithControl(Todo todo, Long version, AuthData authData) {
+    this.canUpdateOrDelete(todo, version, authData);
+    em.remove(todo);
+  }
 
-	private void canUpdateOrDelete(Todo todo, Long version) {
-		// CHECK VERSION
+  @Override
+  public void detach(Todo todo) {
+    em.detach(todo);
+  }
 
-		if (!todo.getVersion().equals(version)) {
-			throw new AppConflictException("Todo has already been updated");
-		}
+  private void canUpdateOrDelete(Todo todo, Long version, AuthData authData) {
+    // CHECK VERSION
 
-		// CHECK SECURITY
+    if (!todo.getVersion().equals(version)) {
+      throw new AppConflictException("Todo has already been updated");
+    }
 
-		// ADMIN can delete/update any Todo
-		// But a standard User can only delete/udpate it's own
-		if (!securityService.hasRole(SecurityProperties.ROLE_ADMIN)) {
-			// Not admin : check owner
-			if (!todo.getUser().getLogin().equals(securityService.getAuthenticationUserLogin())) {
-				throw new AppForbiddenException("You are not allowed to update / delete this todo");
-			}
-		}
+    // CHECK SECURITY
 
-	}
+    // ADMIN can delete/update any Todo
+    // But a standard User can only delete/udpate it's own
+    String currentUserName = authData.name();
+
+    boolean isNotAdmin = authData.authorities().stream().noneMatch(auth -> auth.equals("admin"));
+    boolean isNotTheSameCreationUser = !todo.getUser().equals(currentUserName);
+
+    if (isNotAdmin && isNotTheSameCreationUser) {
+      throw new AppForbiddenException("You are not allowed to update / delete this todo");
+    }
+
+  }
 
 }

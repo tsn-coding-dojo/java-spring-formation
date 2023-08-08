@@ -1,7 +1,7 @@
 package com.thales.formation.validator;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class NoSpecialCharactersValidator implements ConstraintValidator<NoSpecialCharacters, String> {
 
@@ -19,9 +19,7 @@ public class NoSpecialCharactersValidator implements ConstraintValidator<NoSpeci
         if ( object == null ) {
             return true;
         }
-        
         boolean containsSpecialCharacters = object.matches(regex);
-        
         return containsSpecialCharacters != this.expectedTrue;
     }
 }
