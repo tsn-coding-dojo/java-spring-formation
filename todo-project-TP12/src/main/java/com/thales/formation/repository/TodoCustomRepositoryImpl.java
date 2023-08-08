@@ -1,14 +1,12 @@
 package com.thales.formation.repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 import com.thales.formation.exception.AppConflictException;
 import com.thales.formation.exception.AppForbiddenException;
 import com.thales.formation.model.Todo;
+import com.thales.formation.service.domain.AuthData;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 
 public class TodoCustomRepositoryImpl implements TodoCustomRepository {
 
@@ -16,18 +14,18 @@ public class TodoCustomRepositoryImpl implements TodoCustomRepository {
   private EntityManager em;
 
   @Override
-  public void updateWithControl(Todo todo, Long version) {
-    this.canUpdateOrDelete(todo, version);
+  public void updateWithControl(Todo todo, Long version, AuthData authData) {
+    this.canUpdateOrDelete(todo, version, authData);
     // Nothing to do, it will be handled by the transaction
   }
 
   @Override
-  public void deleteWithControl(Todo todo, Long version) {
-    this.canUpdateOrDelete(todo, version);
+  public void deleteWithControl(Todo todo, Long version, AuthData authData) {
+    this.canUpdateOrDelete(todo, version, authData);
     em.remove(todo);
   }
 
-  private void canUpdateOrDelete(Todo todo, Long version) {
+  private void canUpdateOrDelete(Todo todo, Long version, AuthData authData) {
     // CHECK VERSION
 
     if (!todo.getVersion().equals(version)) {
@@ -38,11 +36,10 @@ public class TodoCustomRepositoryImpl implements TodoCustomRepository {
 
     // ADMIN can delete/update any Todo
     // But a standard User can only delete/udpate it's own
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String currentPrincipalName = authentication.getName();
+    String currentUserName = authData.name();
 
-    boolean isNotAdmin = authentication.getAuthorities().stream().noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-    boolean isNotTheSameCreationUser = !todo.getUser().equals(currentPrincipalName);
+    boolean isNotAdmin = authData.authorities().stream().noneMatch(auth -> auth.equals("admin"));
+    boolean isNotTheSameCreationUser = !todo.getUser().equals(currentUserName);
 
     if (isNotAdmin && isNotTheSameCreationUser) {
       throw new AppForbiddenException("You are not allowed to update / delete this todo");

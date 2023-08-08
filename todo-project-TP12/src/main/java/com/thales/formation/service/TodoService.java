@@ -1,11 +1,5 @@
 package com.thales.formation.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.thales.formation.dto.TodoDto;
 import com.thales.formation.enums.TodoStatus;
 import com.thales.formation.exception.AppNotFoundException;
@@ -13,17 +7,25 @@ import com.thales.formation.exception.AppPreconditionFailedException;
 import com.thales.formation.mapper.TodoMapper;
 import com.thales.formation.model.Todo;
 import com.thales.formation.repository.TodoRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @Service
 public class TodoService {
 
-  private TodoMapper todoMapper;
+  private final UserService userService;
 
-  private TodoRepository todoRepository;
+  private final TodoMapper todoMapper;
 
-  public TodoService(TodoMapper todoMapper, TodoRepository todoRepository) {
+  private final TodoRepository todoRepository;
+
+  public TodoService(UserService userService, TodoMapper todoMapper, TodoRepository todoRepository) {
     super();
+    this.userService = userService;
     this.todoMapper = todoMapper;
     this.todoRepository = todoRepository;
   }
@@ -34,10 +36,8 @@ public class TodoService {
 
   public Todo findById(Long id) {
     Optional<Todo> optTodo = todoRepository.findById(id);
-    if (!optTodo.isPresent()) {
-      throw new AppNotFoundException("Todo with id '" + id + "' does not exist");
-    }
-    return optTodo.get();
+    return optTodo
+            .orElseThrow(() -> new AppNotFoundException("Todo with id '" + id + "' does not exist"));
   }
 
   public TodoDto create(TodoDto todoDto, String user) {
@@ -50,7 +50,7 @@ public class TodoService {
   public void update(TodoDto todoDto) {
     Todo todo = this.findById(todoDto.getId());
     todo.setName(todoDto.getName());
-    todoRepository.updateWithControl(todo, todoDto.getVersion());
+    todoRepository.updateWithControl(todo, todoDto.getVersion(), userService.getCurrentAuth());
   }
 
   public void complete(Long todoId, Long version) {
@@ -59,12 +59,12 @@ public class TodoService {
       throw new AppPreconditionFailedException("Todo with id '" + todoId + "' is already completed");
     }
     todo.setStatus(TodoStatus.COMPLETED);
-    todoRepository.updateWithControl(todo, version);
+    todoRepository.updateWithControl(todo, version, userService.getCurrentAuth());
   }
 
   public void delete(Long id, Long version) {
     Todo todo = this.findById(id);
-    todoRepository.deleteWithControl(todo, version);
+    todoRepository.deleteWithControl(todo, version, userService.getCurrentAuth());
   }
 
   public void deleteAll() {

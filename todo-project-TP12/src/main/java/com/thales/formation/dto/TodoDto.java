@@ -1,11 +1,11 @@
 package com.thales.formation.dto;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
+import com.thales.formation.enums.TodoStatus;
 import com.thales.formation.validator.NoSpecialCharacters;
 import com.thales.formation.validator.group.TodoDtoValidationOnUpdate;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public class TodoDto {
 

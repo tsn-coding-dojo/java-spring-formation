@@ -1,39 +1,44 @@
 package com.thales.formation;
 
-import static com.ninja_squad.dbsetup.Operations.deleteAllFrom;
-import static com.ninja_squad.dbsetup.Operations.sequenceOf;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import com.ninja_squad.dbsetup.operation.DeleteAll;
+import com.ninja_squad.dbsetup.operation.Operation;
+import com.thales.formation.config.security.SecurityConfiguration;
+import com.thales.formation.dto.TodoDto;
+import com.thales.formation.enums.TodoStatus;
+import com.thales.formation.model.Todo;
+import com.thales.formation.repository.TodoRepository;
+import com.thales.formation.service.TodoService;
+import com.thales.formation.service.UserService;
+import com.thales.formation.service.domain.AuthData;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import javax.sql.DataSource;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import com.ninja_squad.dbsetup.operation.DeleteAll;
-import com.ninja_squad.dbsetup.operation.Operation;
-import com.thales.formation.dto.TodoDto;
-import com.thales.formation.enums.TodoStatus;
-import com.thales.formation.model.Todo;
-import com.thales.formation.repository.TodoRepository;
-import com.thales.formation.service.TodoService;
+import static com.ninja_squad.dbsetup.Operations.deleteAllFrom;
+import static com.ninja_squad.dbsetup.Operations.sequenceOf;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = Application.class)
+@SpringBootTest(classes = TodoProjectApplication.class)
+@Import(SecurityConfiguration.class)
 class TodoServiceITest {
 
   @Autowired
@@ -41,6 +46,9 @@ class TodoServiceITest {
 
   @Autowired
   private TodoService todoService;
+
+  @MockBean
+  private UserService userService;
 
   @Autowired
   private DataSource dataSource;
@@ -81,6 +89,10 @@ class TodoServiceITest {
     // given
     final TodoDto srTodoDto = todoService.create(todoDto, "user");
     assertEquals(0, srTodoDto.getVersion());
+
+
+    AuthData mockedAuthData = new AuthData("user", List.of("add"));
+    Mockito.when(userService.getCurrentAuth()).thenReturn(mockedAuthData);
 
     // when
     ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
