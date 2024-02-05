@@ -6,8 +6,84 @@ updates:
     schedule:
       interval: "weekly"
 
-  # Maintain dependencies for maven
+  # Maintain dependencies for maven, dependabot does not accept wildcard in subdirectories so following configuration is pretty ugly
   - package-ecosystem: "maven"
-    directory: "/"
+    directory: "/todo-project-TP1"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP2"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP3"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP4"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP4-bis"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP5"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP5-bis"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP7"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP7.1"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP8"
+    schedule:
+      interval: "weekly"
+   - package-ecosystem: "maven"
+    directory: "/todo-project-TP9"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP10"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP11"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP12"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP13"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP14"
+    schedule:
+      interval: "weekly" 
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP15"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP16"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP17"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/todo-project-TP18"
     schedule:
       interval: "weekly"
