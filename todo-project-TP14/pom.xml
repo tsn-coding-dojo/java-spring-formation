@@ -21,7 +21,7 @@
 		<com.ninja-squad.DbSetup.version>2.1.0</com.ninja-squad.DbSetup.version>
 		<org.pitest.pitest-maven.version>1.14.2</org.pitest.pitest-maven.version>
 		<org.pitest.pitest-junit5-plugin.version>1.2.1</org.pitest.pitest-junit5-plugin.version>
-		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
 		<org.jacoco.jacoco-maven-plugin.version>0.8.11</org.jacoco.jacoco-maven-plugin.version>
 	</properties>
 	<dependencies>
