@@ -47,7 +47,7 @@ updates:
     directory: "/todo-project-TP8"
     schedule:
       interval: "weekly"
-   - package-ecosystem: "maven"
+  - package-ecosystem: "maven"
     directory: "/todo-project-TP9"
     schedule:
       interval: "weekly"
