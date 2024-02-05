@@ -23,7 +23,7 @@
 		<org.pitest.pitest-junit5-plugin.version>1.2.0</org.pitest.pitest-junit5-plugin.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 		<org.jacoco.jacoco-maven-plugin.version>0.8.10</org.jacoco.jacoco-maven-plugin.version>
-		<springdoc.version>2.1.0</springdoc.version>
+		<springdoc.version>2.3.0</springdoc.version>
 	</properties>
 	<dependencies>
 		<dependency>
