@@ -6,6 +6,12 @@ updates:
     schedule:
       interval: "weekly"
 
+  # Maintain dependencies for npm
+  - package-ecosystem: "npm"
+    directory: "/presentation-as-code"
+    schedule:
+      interval: "weekly"
+      
   # Maintain dependencies for maven, dependabot does not accept wildcard in subdirectories so following configuration is pretty ugly
   - package-ecosystem: "maven"
     directory: "/todo-project-TP1"
