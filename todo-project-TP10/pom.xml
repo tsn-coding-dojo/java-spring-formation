@@ -22,7 +22,7 @@
 		<org.pitest.pitest-maven.version>1.15.7</org.pitest.pitest-maven.version>
 		<org.pitest.pitest-junit5-plugin.version>1.2.1</org.pitest.pitest-junit5-plugin.version>
 		<maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
-		<org.jacoco.jacoco-maven-plugin.version>0.8.10</org.jacoco.jacoco-maven-plugin.version>
+		<org.jacoco.jacoco-maven-plugin.version>0.8.11</org.jacoco.jacoco-maven-plugin.version>
 	</properties>
 	<dependencies>
 		<dependency>
