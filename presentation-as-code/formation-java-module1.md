@@ -1065,7 +1065,7 @@ Le TP #5 utilise Lombok, le TP #5 bis les records
 
 ▌ Erreur de compilation = Sécurité
 
-▌ Performances proches du code natif
+▌ Performances du code natif
 
 ▌ Peut malgré tout vite devenir complexe en particulier lorsqu’on commence à utiliser les décorateurs (découpage du mapping à plusieurs endroits)
 

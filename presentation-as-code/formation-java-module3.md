@@ -9,7 +9,7 @@ backgroundImage: url('./assets/images/hero-background.svg')
 
 # **Formation Java Backend**
 
-Les fondamentaux ( et un peu plus 🚀)
+Les fondamentaux (et un peu plus 🚀)
 
 ## Module 3
 
@@ -158,7 +158,7 @@ La sécurisation peut se passe à plusieurs niveaux:
     - update, complete, delete -> Authentifié (`isAuthenticated()`)
     - deleteAll -> Admin (`hasAuthority(‘admin’)`)
 - Vérifier que ce niveau de sécurité fonctionne (notamment le deleteAll)
-- Mettre en place un contrôle du droit de modification de la donnée (todoCustomRepositoryImpl)
+- Mettre en place un contrôle du droit de modification de la donnée (`todoCustomRepositoryImpl`)
     - seul le propriétaire peut modifier ou supprimer ses Todos
     - Un admin peut modifier ou supprimer n’importe lequel
 
@@ -225,9 +225,9 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
 ---
 # Gestion des exceptions - A retenir 📇
 
-- Toujours "logger" vos exceptions et "re-thrower" 
+- Toujours "logger" vos exceptions **ou** "re-thrower" 
 - Ne pas utiliser les exceptions checked si on ne les gère pas ensuite ...
-- Pensez au try with resource
+- Pensez au try with resource pour les ressources clossable : https://www.baeldung.com/java-try-with-resources
 
 Lectures utiles :
 - https://reflectoring.io/spring-boot-exception-handling/
@@ -376,7 +376,7 @@ Questions à se poser
 ```
 
 <!-- 
-Il peut y avoir plusieurs typ d'appenders: 
+Il peut y avoir plusieurs type d'appenders: 
 - SMTPAppender – accumulates data in batches and send the content of the batch to a user-defined email after a user-specified event occurs
 - AsyncAppender – appends the logs events asynchronously
 - RollingFileAppender -  faire des rotations de logs en fonction de la taille, des jours, etc..
