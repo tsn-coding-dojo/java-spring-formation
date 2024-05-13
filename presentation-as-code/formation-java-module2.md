@@ -9,7 +9,7 @@ backgroundImage: url('./assets/images/hero-background.svg')
 
 # **Formation Java Backend**
 
-Les fondamentaux ( et un peu plus 🚀)
+Les fondamentaux (et un peu plus 🚀)
 
 ## Module 2
 
@@ -574,10 +574,8 @@ Ajouter la dépendance
 </dependency>
 ```
 
-- Créer un fichier `src\main\resources\db\changelog\db.changelog-master.xml`
-  - Contient la création de la table en XML
-- Modifier le votre application properties tel que
-  - `spring.liquibase.change-log=classpath:db/changelog/db.changelog-master.xml`
+- Créer un fichier `src\main\resources\db\changelog\db.changelog-master.yaml`
+  - Contient la création de la table en YAML (https://docs.liquibase.com/concepts/changelogs/yaml-format.html)
 
 ---
 # Test unitaires
